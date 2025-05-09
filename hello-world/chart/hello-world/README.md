@@ -6,4 +6,4 @@ This is a Helm chart for installing the Cosmonic Control "Hello world" applicati
 - [Provider](https://cosmonic.com/docs/custom-resources/#provider)
 - [Config](https://cosmonic.com/docs/custom-resources/#config)
 
-You can learn more about these resources at https://cosmonic.com/docs/custom-resources/.
+You can learn more about these resources at [https://cosmonic.com/docs/custom-resources/](https://cosmonic.com/docs/custom-resources/).

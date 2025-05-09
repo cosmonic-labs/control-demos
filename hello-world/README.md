@@ -2,7 +2,7 @@
 
 This is a simple Rust-based WebAssembly application intended as a simple "Hello world" introduction for Cosmonic Control. 
 
-While this was written for Cosmonic Control, you can run it with any WebAssembly runtime that supports components and WASI HITTP.
+While this was written for Cosmonic Control, you can run it with any WebAssembly runtime that supports components and WASI HTTP.
 
 ## Running with Cosmonic Control
 

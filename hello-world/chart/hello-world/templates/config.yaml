@@ -1,0 +1,11 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: {{ .Values.config.name }}
+spec:
+  cluster:
+    name: {{ .Values.config.clusterName }}
+    namespace: {{ .Values.config.clusterNamespace }}
+  config:
+    - name: {{ .Values.config.configName }}
+      value: {{ .Values.config.configValue }}

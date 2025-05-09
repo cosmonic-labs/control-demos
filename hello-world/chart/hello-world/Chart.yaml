@@ -1,0 +1,7 @@
+apiVersion: v2
+name: hello-world
+description: Hello world application for Cosmonic Control
+
+type: application
+version: 0.1.0
+appVersion: "0.0.1"

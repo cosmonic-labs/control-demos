@@ -1,0 +1,12 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Provider
+metadata:
+  name: {{ .Values.provider.name }}
+spec:
+  cluster:
+    name: {{ .Values.provider.clusterName }}
+    namespace: {{ .Values.provider.clusterNamespace }}
+  image: {{ .Values.provider.image }}
+  replicas: {{ .Values.provider.replicas }}
+  configFrom:
+    - name: {{ .Values.config.name }}

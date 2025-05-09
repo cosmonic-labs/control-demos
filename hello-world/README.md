@@ -6,7 +6,7 @@ While this was written for Cosmonic Control, you can run it with any WebAssembly
 
 ## Running with Cosmonic Control
 
-You can deploy this application to a Kubernetes cluster with [Cosmonic Control]() using the included Helm chart:
+You can deploy this application to a Kubernetes cluster with [Cosmonic Control](https://cosmonic.com/docs/) using the included Helm chart:
 
 ```shell
 helm install hello-world ./chart/hello-world

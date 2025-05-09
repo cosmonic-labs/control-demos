@@ -1,0 +1,47 @@
+# Default values for hello-world.
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This is for setting up a WebAssembly component. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
+component:
+  name: http-hello-world
+  clusterName: demo
+  clusterNamespace: default 
+  image: ghcr.io/cosmonic-labs/hello_world:0.0.1
+  concurrency: 100
+  replicas: 1
+  exportsWitNamespace: wasi
+  exportsWitPackage: http
+  exportsWitInterfaces:
+    - incoming-handler
+  exportsTargetProviderName: http-server
+  exportsTargetProviderNamespace: default
+
+# This is for setting up a wasmCloud config. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
+config:
+  name: http-server
+  clusterName: demo
+  clusterNamespace: default 
+  configName: default_address
+  configValue: "0.0.0.0:8080"
+
+# This is for setting up a wasmCloud provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+provider:
+  name: http-server
+  clusterName: demo
+  clusterNamespace: default 
+  image: ghcr.io/wasmcloud/http-server:0.26.1
+  replicas: 1
+  configFromName: http-server
+  
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

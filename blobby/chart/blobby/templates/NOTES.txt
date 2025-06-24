@@ -1,0 +1,8 @@
+Open a port-forward to the host group to access the application:
+
+  kubectl port-forward deploy/demo-hostgroup 8080
+
+In another tab or window, call the application through the port-forward:
+
+  curl localhost:8080
+

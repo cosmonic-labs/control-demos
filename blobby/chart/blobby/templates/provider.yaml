@@ -1,0 +1,25 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Provider
+metadata:
+  name: {{ .Values.httpProvider.name }}
+spec:
+  cluster:
+    name: {{ .Values.httpProvider.clusterName }}
+    namespace: {{ .Values.httpProvider.clusterNamespace }}
+  image: {{ .Values.httpProvider.image }}
+  replicas: {{ .Values.httpProvider.replicas }}
+  configFrom:
+    - name: {{ .Values.httpConfig.name }}
+---
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Provider
+metadata:
+  name: {{ .Values.blobProvider.name }}
+spec:
+  cluster:
+    name: {{ .Values.blobProvider.clusterName }}
+    namespace: {{ .Values.blobProvider.clusterNamespace }}
+  image: {{ .Values.blobProvider.image }}
+  replicas: {{ .Values.blobProvider.replicas }}
+  configFrom:
+    - name: {{ .Values.blobConfig.name }}

@@ -1,0 +1,81 @@
+# Default values for hello-world.
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This is for setting up a WebAssembly component. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
+component:
+  name: blobby
+  clusterName: default
+  clusterNamespace: default 
+  image: ghcr.io/wasmcloud/components/blobby-rust:0.5.0
+  concurrency: 100
+  replicas: 1
+  exportsWitNamespace: wasi
+  exportsWitPackage: http
+  exportsWitInterfaces:
+    - incoming-handler
+  exportsTargetProviderName: http-server
+  exportsTargetProviderNamespace: default
+  importsWitNamespace: wasi
+  importsWitPackage: blobstore
+  importsWitInterfaces:
+    - blobstore
+  importsTargetProviderName: blobstore
+  importsTargetProviderNamespace: default
+
+# This is for setting up a wasmCloud HTTP config. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
+httpConfig:
+  name: http-server
+  clusterName: default
+  clusterNamespace: default 
+  configName: default_address
+  configValue: "0.0.0.0:8080"
+
+# This is for setting up a wasmCloud HTTP config. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
+blobConfig:
+  name: blobstore
+  clusterName: default
+  clusterNamespace: default 
+  configName000: aws_access_key_id
+  configValue000: ""
+  configName001: aws_secret_access_key
+  configValue001: ""
+  configName002: aws_session_token
+  configValue002: ""
+  configName003: aws_region
+  configValue003: ""
+  configName004: aws_endpoint
+  configValue004: ""
+  configName005: aws_role_arn
+  configValue005: ""
+
+# This is for setting up a wasmCloud HTTP provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+httpProvider:
+  name: http-server
+  clusterName: default
+  clusterNamespace: default 
+  image: ghcr.io/wasmcloud/http-server:0.26.1
+  replicas: 1
+  configFromName: http-server
+  
+# This is for setting up a wasmCloud HTTP provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+blobProvider:
+  name: blobstore
+  clusterName: default
+  clusterNamespace: default 
+  image: ghcr.io/wasmcloud/blobstore-s3:0.12.0
+  replicas: 1
+  configFromName: blobstore
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

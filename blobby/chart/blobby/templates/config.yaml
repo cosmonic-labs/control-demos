@@ -1,0 +1,33 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: {{ .Values.httpConfig.name }}
+spec:
+  cluster:
+    name: {{ .Values.httpConfig.clusterName }}
+    namespace: {{ .Values.httpConfig.clusterNamespace }}
+  config:
+    - name: {{ .Values.httpConfig.configName }}
+      value: {{ .Values.httpConfig.configValue }}
+---
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: {{ .Values.blobConfig.name }}
+spec:
+  cluster:
+    name: {{ .Values.blobConfig.clusterName }}
+    namespace: {{ .Values.blobConfig.clusterNamespace }}
+  config:
+    - name: {{ .Values.blobConfig.configName000 }}
+      value: {{ .Values.blobConfig.configValue000 }}
+    - name: {{ .Values.blobConfig.configName001 }}
+      value: {{ .Values.blobConfig.configValue001 }}
+    - name: {{ .Values.blobConfig.configName002 }}
+      value: {{ .Values.blobConfig.configValue002 }}
+    - name: {{ .Values.blobConfig.configName003 }}
+      value: {{ .Values.blobConfig.configValue003 }}
+    - name: {{ .Values.blobConfig.configName004 }}
+      value: {{ .Values.blobConfig.configValue004 }}
+    - name: {{ .Values.blobConfig.configName005 }}
+      value: {{ .Values.blobConfig.configValue005 }}

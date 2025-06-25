@@ -1,0 +1,23 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Component
+metadata:
+  name: http-server
+spec:
+  image: ghcr.io/cosmonic-labs/components/http-server:0.1.0
+  concurrency: 100
+  replicas: 1
+  hostSelector:
+    matchLabels:
+      "hostgroup": "default"
+  exports:
+    - wit:
+        namespace: wasi
+        package: http
+        interfaces:
+          - incoming-handler
+      target:
+        provider:
+          name: http-server
+          namespace: default
+        configFrom:
+          - name: component-http-config

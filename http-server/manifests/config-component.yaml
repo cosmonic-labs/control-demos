@@ -1,0 +1,8 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: component-http-config
+spec:
+  config:
+    - name: host
+      value: localhost:9092

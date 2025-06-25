@@ -1,0 +1,12 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Provider
+metadata:
+  name: http-server
+spec:
+  image: ghcr.io/wasmcloud/http-server:0.27.0
+  replicas: 1
+  configFrom:
+    - name: http-server
+  hostSelector:
+    matchLabels:
+      "hostgroup": "default"

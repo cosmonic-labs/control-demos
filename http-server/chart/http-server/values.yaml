@@ -1,0 +1,54 @@
+# Default values for http-server.
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# Namespace for deployment.
+namespace:
+  name: default
+
+# This is for setting up a WebAssembly component. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
+component:
+  name: http-server 
+  image: ghcr.io/cosmonic-labs/components/http-server:0.1.0
+  concurrency: 100
+  replicas: 1
+  hostgroup: "default"
+  exportsWitNamespace: wasi
+  exportsWitPackage: http
+  exportsWitInterfaces:
+    - incoming-handler
+  exportsTargetProviderName: http-server
+
+# This is for setting up the wasmCloud config for the component. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
+configComponent:
+  name: component-http-config
+  configName: host
+  configValue: localhost:9092
+
+# This is for setting up a wasmCloud provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+provider:
+  name: http-server
+  image: ghcr.io/wasmcloud/http-server:0.27.0
+  replicas: 1
+  hostgroup: "default"
+  configFromName: http-server
+  
+# This is for setting up the wasmCloud config for the provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
+configProvider:
+  name: http-server
+  configName000: default_address
+  configValue000: "0.0.0.0:9092"
+  configName001: routing_mode
+  configValue001: host
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

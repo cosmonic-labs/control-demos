@@ -1,0 +1,22 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Component
+metadata:
+  name: {{ .Values.component.name }}
+spec:
+  image: {{ .Values.component.image }}
+  concurrency: {{ .Values.component.concurrency }}
+  replicas: {{ .Values.component.replicas }}
+  hostSelector:
+    matchLabels:
+      "hostgroup": {{ .Values.component.hostgroup }}
+  exports:
+    - wit:
+        namespace: {{ .Values.component.exportsWitNamespace }}
+        package: {{ .Values.component.exportsWitPackage }}
+        interfaces: {{ .Values.component.exportsWitInterfaces }}
+      target:
+        provider:
+          name: {{ .Values.component.exportsTargetProviderName }}
+          namespace: {{ .Values.namespace.name }}
+        configFrom:
+          - name: {{ .Values.configComponent.name }}

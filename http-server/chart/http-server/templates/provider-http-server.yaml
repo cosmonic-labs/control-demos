@@ -1,0 +1,12 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Provider
+metadata:
+  name: {{ .Values.provider.name }}
+spec:
+  image: {{ .Values.provider.image }}
+  replicas: {{ .Values.provider.replicas }}
+  hostSelector:
+    matchLabels:
+      "hostgroup": {{ .Values.provider.hostgroup }}
+  configFrom:
+    - name: {{ .Values.configProvider.name }}

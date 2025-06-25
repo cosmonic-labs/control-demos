@@ -1,0 +1,7 @@
+apiVersion: v2
+name: http-server
+description: HTTP Server for Cosmonic Control
+
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

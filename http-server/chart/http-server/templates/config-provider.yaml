@@ -1,0 +1,10 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: {{ .Values.configProvider.name }}
+spec:
+  config:
+    - name: {{ .Values.configProvider.configName000 }}
+      value: {{ .Values.configProvider.configValue000 }}
+    - name: {{ .Values.configProvider.configName001 }}
+      value: {{ .Values.configProvider.configValue001 }}

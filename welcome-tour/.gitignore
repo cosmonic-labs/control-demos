@@ -12,3 +12,4 @@ dist
 build
 generated/**
 wit/deps/**
+.wash

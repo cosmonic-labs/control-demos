@@ -1,18 +1,12 @@
 # HTTP Server for Cosmonic Control
 
-This is a simple Go-based wasmCloud application presented as a template for deployment to Kubernetes clusters with [Cosmonic Control](https://cosmonic.com/docs/). 
+This is a simple HTTP server with multiple endpoints written in Go, implemented as a Wasm component and packaged for deployment to Kubernetes clusters with [Cosmonic Control](https://cosmonic.com/docs/).
 
-While this was designed for Cosmonic Control, you can run the `.wasm` binary build output with any WebAssembly runtime that supports components and WASI HTTP.
+The `.wasm` binary build output with any WebAssembly runtime that supports components and `wasi:http`.
 
-## Running with Cosmonic Control
+## Deploy with Cosmonic Control
 
-You can deploy this template to a Kubernetes cluster with Cosmonic Control using the included CRD manifests:
-
-```shell
-kubectl apply -f ./manifests
-```
-
-Alternatively, you can deploy the HTTP Server template using the included Helm chart:
+Deploy this template to a Kubernetes cluster with Cosmonic Control using the included Helm chart:
 
 ```shell
 helm install http-server ./chart/http-server
@@ -30,10 +24,8 @@ In addition to the standard elements of a Go project, the template directory inc
 
 - `build/`: Target directory for compiled `.wasm` binaries
 - `chart/`: Helm chart
-- `manifests/`: CRD deployment manifests for Kubernetes clusters with Cosmonic Control
+- `manifests/`: Example CRD deployment manifests for Kubernetes clusters with Cosmonic Control
 - `wit/`: Directory for WebAssembly Interface Type (WIT) packages that define interfaces
-- `wasmcloud.lock`: Automatically generated lockfile for WIT packages
-- `wasmcloud.toml`: Configuration file for a wasmCloud application
 
 ## Build Dependencies
 
@@ -43,7 +35,7 @@ Before starting, ensure that you have the following installed in addition to the
 - [`wasm-tools`](https://github.com/bytecodealliance/wasm-tools#installation) for Go bindings
 - [`wash`](https://github.com/cosmonic-labs/wash) for building the component
 
-## Building with `wash`
+### Developing with `wash`
 
 Clone the [cosmonic-labs/control-demos repository](https://github.com/cosmonic-labs/control-demos): 
 
@@ -57,36 +49,13 @@ Change directory to `http-server`:
 cd http-server
 ```
 
-To build the component:
-
-```shell
-wash build
-```
-
-### Developing with `wash`
-
-Run `wash dev` to start a local development loop:
+Start a development loop:
 
 ```shell
 wash dev
 ```
 
-The `wash dev` command will:
-
-- Start a local wasmCloud environment
-- Build this component
-- Deploy your application and all requirements to run the application locally, including...
-  - Your locally built component
-  - The [HTTP server provider](https://github.com/wasmCloud/wasmCloud/pkgs/container/http-server), which will receive requests from the outside world
-    (on port 8000 by default)
-  - Necessary links between providers and your component so your component can handle web traffic
-- Watch your code for changes and re-deploy when necessary.
-
-Once the application is deployed, open another terminal tab. To ensure that the application has reached `Deployed` status, you can use `wash app list`:
-
-```shell
-wash app list
-```
+The HTTP Server is accessible at localhost:8000. View the code and make changes in `main.go`.
 
 ### Send a request
 
@@ -201,6 +170,14 @@ Hello World
 ### Clean Up
 
 You can cancel the `wash dev` process with `Ctrl-C`.
+
+## Building with `wash`
+
+To build the component:
+
+```shell
+wash build
+```
 
 ## Further Reading
 

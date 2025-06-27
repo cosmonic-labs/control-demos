@@ -19,5 +19,3 @@ spec:
         provider:
           name: http-server
           namespace: default
-        configFrom:
-          - name: component-http-config

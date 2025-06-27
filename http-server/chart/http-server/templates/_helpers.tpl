@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "hello_world.name" -}}
+{{- define "http-server.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "hello_world.fullname" -}}
+{{- define "http-server.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "hello_world.chart" -}}
+{{- define "http-server.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "hello_world.labels" -}}
-helm.sh/chart: {{ include "hello_world.chart" . }}
-{{ include "hello_world.selectorLabels" . }}
+{{- define "http-server.labels" -}}
+helm.sh/chart: {{ include "http-server.chart" . }}
+{{ include "http-server.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "hello_world.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "hello_world.name" . }}
+{{- define "http-server.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "http-server.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "hello_world.serviceAccountName" -}}
+{{- define "http-server.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "hello_world.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "http-server.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

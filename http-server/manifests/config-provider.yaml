@@ -6,5 +6,3 @@ spec:
   config:
     - name: default_address
       value: "0.0.0.0:9092"
-    - name: routing_mode
-      value: host

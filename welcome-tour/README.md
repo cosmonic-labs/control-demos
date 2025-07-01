@@ -1,4 +1,4 @@
-# Cosmonic Control Welcome Tour
+# Welcome Tour for Cosmonic Control
 
 This Wasm component introduces users to the core features of Cosmonic Control. It is built on [Hono](https://hono.dev) and based on the [HTTP Server with Hono wasmCloud example](https://github.com/wasmCloud/typescript/tree/main/examples/components/http-server-with-hono).
 
@@ -6,28 +6,60 @@ The component serves a simple web app that embeds assets like fonts and images d
 
 It also uses `wasi:config/runtime` to pass config from the environment to the Hono app for values such as the Console UI address.
 
-## Dependencies
+## Deploy with Cosmonic Control
 
-- `wash` - [wasmCloud Shell][wash] controls your [wasmCloud][wasmcloud] host instances and enables building components
-- `npm` - [Node Package Manager (NPM)][npm] which manages packages for for the NodeJS ecosystem
-- `node` - [NodeJS runtime][nodejs] (see `.nvmrc` for version)
+Deploy this template to a Kubernetes cluster with Cosmonic Control using the included Helm chart:
 
-[wash]: https://github.com/cosmonic-labs/wash
-[node]: https://nodejs.org
-[npm]: https://github.com/npm/cli
+```shell
+helm install http-server ./chart/welcome-tour
+```
 
-## Quickstart
+The chart is also available as an OCI artifact:
 
-1. Install dependencies and start a development loop
+```shell
+helm install http-server oci://ghcr.io/cosmonic-labs/charts/welcome-tour
+```
 
-   ```shell
-   wash dev --runtime-config consoleurl=127.0.0.1:8000
-   ```
+## Contents
 
-   or
+In addition to the standard elements of a TypeScript project, the directory includes the following files and directories:
 
-   ```shell
-   npm run start
-   ```
+- `chart/`: Helm chart
+- `manifests/`: Example CRD deployment manifests for Kubernetes clusters with Cosmonic Control
+- `wit/`: Directory for WebAssembly Interface Type (WIT) packages that define interfaces
 
-   Navigate to [127.0.0.1:8000](127.0.0.1:8000).
+## Build Dependencies
+
+Before starting, ensure that you have the following installed:
+
+- [`node` - NodeJS runtime](https://nodejs.org) (see `.nvmrc` for version)
+- [`npm` - Node Package Manager (NPM)](https://github.com/npm/cli) manages packages for the NodeJS ecosystem
+- [`wash` - Wasm Shell](https://github.com/cosmonic-labs/wash) for developing and building components
+
+### Developing with `wash`
+
+Clone the [cosmonic-labs/control-demos repository](https://github.com/cosmonic-labs/control-demos): 
+
+```shell
+git clone https://github.com/cosmonic-labs/control-demos.git
+```
+
+Change directory to `welcome-tour`:
+
+```shell
+cd welcome-tour
+```
+
+Start a development loop:
+
+```shell
+wash dev --runtime-config consoleurl=127.0.0.1:8000
+```
+
+or
+
+```shell
+npm run start
+```
+
+Navigate to [127.0.0.1:8000](127.0.0.1:8000).

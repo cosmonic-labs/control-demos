@@ -1,0 +1,37 @@
+# Default values for http-server.
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# Namespace for deployment.
+namespace:
+  name: default
+
+# This is for setting up a WebAssembly component. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
+component:
+  name: welcome-tour 
+  concurrency: 100
+  replicas: 1
+  hostgroup: "default"
+
+# This is for setting up a wasmCloud provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+provider:
+  name: http-server
+  replicas: 1
+  hostgroup: "default"
+
+# This is for setting up the wasmCloud config for the provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
+configProvider:
+  name: http-server
+  configAddress: "0.0.0.0:9091"
+  configConsoleUrl: "localhost:8080"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

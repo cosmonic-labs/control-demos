@@ -21,3 +21,12 @@
 .idea/
 *.tmproj
 .vscode/
+
+*.go
+go*
+Makefile
+*.tgz
+ct.yaml
+helmfile.yaml
+.helmignore
+CONTRIBUTING.md

@@ -1,0 +1,11 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: welcome-tour-config
+  namespace: {{ .Release.Namespace }}
+spec:
+  config:
+    - name: host
+      value: "{{ .Values.component.hostname }}"
+    - name: consoleUrl
+      value: {{ .Values.component.configConsoleUrl }}

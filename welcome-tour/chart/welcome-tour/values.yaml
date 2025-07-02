@@ -11,27 +11,15 @@ namespace:
 # This is for setting up a WebAssembly component. 
 # More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
 component:
-  name: welcome-tour 
-  concurrency: 100
-  replicas: 1
+  image: ghcr.io/cosmonic-labs/components/hello-world-hono:0.1.0
+  hostname: "localhost:9091"
   hostgroup: "default"
+  configAddress: "http://0.0.0.0:9091"
+  configConsoleUrl: "http://localhost:8080"
 
-# This is for setting up a wasmCloud provider. 
+# HTTP Provider in Cosmonic Control cosmonic-system namespace.
+# From the cosmonic-control-hostgroup chart with http.enabled=true
 # More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
-provider:
-  name: http-server
-  replicas: 1
-  hostgroup: "default"
-
-# This is for setting up the wasmCloud config for the provider. 
-# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
-configProvider:
-  name: http-server
-  configAddress: "0.0.0.0:9091"
-  configConsoleUrl: "localhost:8080"
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
+httpProvider:
+  hostgroup: default
+  namespace: cosmonic-system

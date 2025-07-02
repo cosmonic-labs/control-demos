@@ -11,7 +11,7 @@
     "build": "npm run generate:types && npm run build:ts && npm run build:js",
     "install-and-build": "npm install && npm run build",
     "start": "npm run dev",
-    "dev": "wash dev --runtime-config consoleurl=127.0.0.1:8000",
+    "dev": "wash dev --runtime-config consoleurl=http://127.0.0.1:8000",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
   "dependencies": {

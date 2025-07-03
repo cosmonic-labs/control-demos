@@ -7,5 +7,5 @@ spec:
   config:
     - name: host
       value: "{{ .Values.component.hostname }}"
-    - name: consoleUrl
+    - name: consoleurl
       value: {{ .Values.component.configConsoleUrl }}

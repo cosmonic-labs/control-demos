@@ -11,7 +11,7 @@ namespace:
 # This is for setting up a WebAssembly component. 
 # More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
 component:
-  image: ghcr.io/cosmonic-labs/components/hello-world-hono:0.1.0
+  image: ghcr.io/cosmonic-labs/components/welcome-tour:0.1.0
   hostname: "localhost:9091"
   hostgroup: "default"
   configAddress: "http://0.0.0.0:9091"

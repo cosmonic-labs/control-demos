@@ -1,0 +1,88 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cosmonic-control
+  namespace: argocd
+  annotations:
+    # ArgoCD will apply this manifest first.
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    chart: cosmonic-control
+    repoURL: ghcr.io/cosmonic  # note: the oci:// syntax is not included.
+    targetRevision: 0.2.0
+    helm:
+      valuesObject: 
+        cosmonicLicenseKey: "<insert license here>"
+  destination:
+    name: "in-cluster"
+    namespace: cosmonic-system
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hostgroup
+  namespace: argocd
+  annotations:
+    # ArgoCD will apply this manifest first.
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    chart: cosmonic-control-hostgroup
+    repoURL: ghcr.io/cosmonic  # note: the oci:// syntax is not included.
+    targetRevision: 0.2.0
+    helm:
+      valuesObject: 
+        http:
+          enabled: true
+  destination:
+    name: "in-cluster"
+    namespace: cosmonic-system
+  syncPolicy:
+    automated: {}
+    retry:
+      limit: -1
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: welcome-tour
+  namespace: argocd
+  annotations:
+    # ArgoCD will apply this manifest second.
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    chart: charts/welcome-tour
+    repoURL: ghcr.io/cosmonic-labs  # note: the oci:// syntax is not included.
+    targetRevision: 0.1.0
+  destination:
+    name: "in-cluster"
+    namespace: welcome-app
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: -1
+      backoff:
+        duration: 30s
+        factor: 2
+        maxDuration: 5m

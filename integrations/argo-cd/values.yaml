@@ -1,0 +1,6 @@
+dex:
+  enabled: false
+notifications:
+  enabled: false
+server:
+  insecure: true

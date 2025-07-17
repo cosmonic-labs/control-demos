@@ -2,6 +2,7 @@ apiVersion: runtime.wasmcloud.dev/v1alpha1
 kind: Component
 metadata:
   name: http-server
+  namespace: default
 spec:
   image: ghcr.io/cosmonic-labs/components/http-server:0.1.0
   concurrency: 100
@@ -9,6 +10,8 @@ spec:
   hostSelector:
     matchLabels:
       "hostgroup": "default"
+  configFrom:
+    - name: http-server-config
   exports:
     - wit:
         namespace: wasi
@@ -17,5 +20,8 @@ spec:
           - incoming-handler
       target:
         provider:
-          name: http-server
-          namespace: default
+          name: http-default
+          namespace: cosmonic-system
+        configFrom:
+          - name: http-server-config
+ 

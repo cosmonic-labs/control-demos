@@ -1,8 +1,0 @@
-apiVersion: runtime.wasmcloud.dev/v1alpha1
-kind: Config
-metadata:
-  name: http-server
-spec:
-  config:
-    - name: default_address
-      value: "0.0.0.0:9092"

@@ -1,1 +1,7 @@
-The HTTP Server is serving on {{ .Values.configProvider.configValue }}
+The HTTP Server is serving on {{ .Values.component.configAddress }}.
+
+If the component is serving on the default port 9091, port-forward and connect locally with:
+
+   kubectl -n cosmonic-system port-forward svc/hostgroup-default 9091:9091
+
+   curl localhost:9091

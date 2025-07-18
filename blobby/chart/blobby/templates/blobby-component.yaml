@@ -1,0 +1,38 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Component
+metadata:
+  name: blobby-nats
+  namespace: {{ .Release.Namespace }}
+spec:
+  image: {{ .Values.component.image }}
+  concurrency: 100
+  replicas: 1
+  hostSelector:
+    matchLabels:
+      "hostgroup": "default"
+  configFrom:
+    - name: http-server-config
+  exports:
+    - wit:
+        namespace: wasi
+        package: http
+        interfaces:
+          - incoming-handler
+      target:
+        provider:
+          name: http-default
+          namespace: {{ .Values.httpProvider.namespace }}
+        configFrom:
+          - name: http-server-config
+  imports:
+    - wit:
+        namespace: wasi
+        package: blobstore
+        interfaces:
+          - blobstore
+      target:
+        provider: 
+          name: blobstore-nats-provider
+          namespace: {{ .Release.Namespace }}
+        configFrom:
+          - name: blobstore-nats-config

@@ -1,0 +1,54 @@
+# Default values for blobby-nats.
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# Namespace for deployment.
+namespace:
+  name: default
+
+# Values for NATS subchart (dependency for provider)
+nats:
+  enabled: true
+  fullnameOverride: "nats"
+  nameOverride: "nats"
+  config:
+    cluster:
+      enabled: true
+      replicas: 3
+    leafnodes:
+      enabled: true
+    websocket:
+      enabled: true
+      port: 4223
+    jetstream:
+      enabled: true
+      fileStore:
+        pvc:
+          size: 10Gi
+      merge:
+        domain: default
+
+# HTTP Provider in Cosmonic Control cosmonic-system namespace.
+# From the cosmonic-control-hostgroup chart with http.enabled=true
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+httpProvider:
+  namespace: cosmonic-system
+
+# This is for setting up a wasmCloud blobstore-nats provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+blobProvider:
+  image: ghcr.io/wasmcloud/blobstore-nats:6948263
+
+# This is for setting up a WebAssembly component. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
+component:
+  image: ghcr.io/wasmcloud/components/blobby-rust:0.5.0
+  hostname: "localhost:9091"
+
+# This is for setting up the blobstore-nats config. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
+blobConfig:
+  configClusterUri: nats://nats.default.svc.cluster.local:4222
+  

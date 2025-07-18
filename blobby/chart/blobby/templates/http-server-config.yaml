@@ -1,0 +1,9 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: http-server-config
+  namespace: default
+spec:
+  config:
+    - name: host
+      value: "{{ .Values.component.hostname }}"

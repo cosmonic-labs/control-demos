@@ -1,0 +1,25 @@
+apiVersion: v2
+name: blobby-nats
+description: HTTP-based file server backed by NATS
+
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+
+dependencies:
+  - name: nats
+    version: 1.2.3
+    repository: https://nats-io.github.io/k8s/helm/charts/
+    condition: nats.enabled
+    tags:
+      - nats-cluster 
+
+kubeVersion: ">= 1.29.0-0"
+
+icon: https://avatars.githubusercontent.com/u/80437882
+sources:
+  - https://github.com/cosmonic
+
+maintainers:
+  - name: Cosmonic
+    url: https://github.com/orgs/cosmonic

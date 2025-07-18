@@ -1,0 +1,13 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Provider
+metadata:
+  name: blobstore-nats-provider
+  namespace: {{ .Release.Namespace }}
+spec:
+  image: {{ .Values.blobProvider.image }}
+  replicas: 1
+  configFrom:
+    - name: blobstore-nats-config
+  hostSelector:
+    matchLabels:
+      "hostgroup": "default"

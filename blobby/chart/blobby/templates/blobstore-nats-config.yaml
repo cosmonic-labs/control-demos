@@ -1,0 +1,9 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: blobstore-nats-config
+  namespace: {{ .Release.Namespace }}
+spec:
+  config:
+    - name: cluster_uri
+      value: {{ .Values.blobConfig.configClusterUri }}

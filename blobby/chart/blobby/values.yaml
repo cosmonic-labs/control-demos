@@ -44,7 +44,7 @@ blobProvider:
 # This is for setting up a WebAssembly component. 
 # More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
 component:
-  image: ghcr.io/wasmcloud/components/blobby-rust:0.5.0
+  image: ghcr.io/cosmonic-labs/components/blobby:0.1.0
   hostname: "localhost:9091"
 
 # This is for setting up the blobstore-nats config. 

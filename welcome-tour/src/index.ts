@@ -61,6 +61,10 @@ app.get('/', (c: Context) => {
             margin-left: 20%;
             margin-right: 20%;
           }
+          head, body {
+            background-color: #0a0f14;
+            color: #b9bec4;
+          }
           p {
             font-size: 18px;
             font-weight: 400;
@@ -81,7 +85,7 @@ app.get('/', (c: Context) => {
           <a class="button" style="vertical-align:middle" href="${consoleUrl}" target="_blank"><span>Launch Console</span></a>
           <p>See the <a href="https://cosmonic.com/docs/console" target="_blank">Console documentation</a> for a complete walkthrough.</p>
           <h2>2. Access Grafana</h2>
-          <p>For most installations, you can find the bundled Grafana dashboard at <a href="/_grafana" target="_blank">/_grafana</a>. See the <a href="https://cosmonic.com/docs/observability" target="_blank">Observability section of the Cosmonic Control documentation</a> for more information.</p>
+          <p>For most installations, you can find the bundled Grafana dashboard at <a href="${consoleUrl}/_grafana" target="_blank">${consoleUrl}/_grafana</a>. See the <a href="https://cosmonic.com/docs/observability" target="_blank">Observability section of the Cosmonic Control documentation</a> for more information.</p>
           <h2>3. Explore Templates</h2>
           <p>Deploy an example from our <a href="https://cosmonic.com/docs/template-catalog/" target="_blank">Template Catalog</a>, or browse wasmCloud applications in Go, Rust, and TypeScript in <a href="https://wasmcloud.com/docs/examples/" target="_blank">the wasmCloud documentation</a>.</p>
         </div>

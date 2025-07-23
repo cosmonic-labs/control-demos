@@ -1,0 +1,32 @@
+{
+  "name": "hono-swagger-ui",
+  "version": "0.0.1",
+  "description": "A wasmCloud component using Hono and Swagger UI",
+  "main": "dist/index.bundled.js",
+  "scripts": {
+    "postinstall": "npm run generate:types -o types",
+    "generate:types": "rimraf generated/types && jco guest-types wit/ -o generated/types",
+    "build:ts": "rollup -c",
+    "build:js": "jco componentize -w wit -o dist/cosmonic_control_welcome_tour.wasm dist/index.bundled.js",
+    "build": "npm run generate:types && npm run build:ts && npm run build:js",
+    "install-and-build": "npm install && npm run build",
+    "start": "npm run dev",
+    "dev": "wash dev --runtime-config consoleurl=http://127.0.0.1:8000",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.14.3",
+    "@hono/swagger-ui": "^0.5.2",
+    "hono": "^4.7.11"
+  },
+  "devDependencies": {
+    "@bytecodealliance/jco": "^1.11.2",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@types/node": "^22.15.29",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.41.1",
+    "tslib": "^2.8.1",
+    "typescript": "^5.6.3"
+  }
+}

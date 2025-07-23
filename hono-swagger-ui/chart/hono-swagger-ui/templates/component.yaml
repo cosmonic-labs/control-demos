@@ -1,0 +1,26 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Component
+metadata:
+  name: hono-swagger-ui-component
+  namespace: {{ .Release.Namespace }}
+spec:
+  image: {{ .Values.component.image }}
+  concurrency: 100
+  replicas: 1
+  hostSelector:
+    matchLabels:
+      "hostgroup": "{{ .Values.httpProvider.hostgroup }}"
+  configFrom:
+    - name: hono-swagger-ui-config
+  exports:
+    - wit:
+        namespace: wasi
+        package: http
+        interfaces:
+          - incoming-handler
+      target:
+        provider:
+          name: "http-{{ .Values.httpProvider.hostgroup }}"
+          namespace: {{ .Values.httpProvider.namespace }}
+        configFrom:
+          - name: hono-swagger-ui-config

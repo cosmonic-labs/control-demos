@@ -1,0 +1,9 @@
+The Hono with Swagger UI example is serving on {{ .Values.component.configAddress }}.
+
+If the component is serving on the default port 9091, port-forward with:
+
+   kubectl -n cosmonic-system port-forward svc/hostgroup-default 9091:9091
+
+In your browser, navigate to:
+
+   {{ .Values.component.configAddress }}/ui

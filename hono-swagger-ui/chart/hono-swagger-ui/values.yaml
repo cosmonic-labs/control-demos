@@ -1,0 +1,24 @@
+# Default values for hono-swagger-ui.
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# Namespace for deployment.
+namespace:
+  name: default
+
+# This is for setting up a WebAssembly component. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
+component:
+  image: ghcr.io/cosmonic-labs/components/hono-swagger-ui:0.1.0
+  hostname: "localhost:9091"
+  hostgroup: "default"
+  configAddress: "http://0.0.0.0:9091"
+
+# HTTP Provider in Cosmonic Control cosmonic-system namespace.
+# From the cosmonic-control-hostgroup chart with http.enabled=true
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+httpProvider:
+  hostgroup: default
+  namespace: cosmonic-system

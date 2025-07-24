@@ -1,14 +1,15 @@
 # Hono with Swagger UI for Cosmonic Control
 
-This Wasm component is a tool for documenting and testing RESTful APIs, built on the [Hono HTTP framework]() and the [Swagger UI](https://swagger.io/docs/open-source-tools/swagger-ui/usage/installation/) middleware. The component provides an interactive documentation interface based on a given OpenAPI specification. 
+This Wasm component is a tool for documenting and testing RESTful APIs, built on the [Hono HTTP framework](https://hono.dev/docs/) and the [Swagger UI](https://swagger.io/docs/open-source-tools/swagger-ui/usage/installation/) middleware. The component provides an interactive documentation interface based on a given OpenAPI specification. 
 
 ## Install Cosmonic Control
 
-Sign-up for Cosmonic Control's [free trial](https://cosmonic.com/trial) to get a `cosmonicLicenseKey`.
+Sign up for Cosmonic Control's [free trial](https://cosmonic.com/trial) to get a `cosmonicLicenseKey`.
 
 ```bash
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control --version 0.2.0 --namespace cosmonic-system --create-namespace --set cosmonicLicenseKey="<insert license here>"
-
+```
+```bash
 helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup --version 0.2.0 --namespace cosmonic-system --set http.enabled=true
 ```
 
@@ -52,7 +53,6 @@ kubectl delete ns hono-swagger-ui
 In addition to the standard elements of a TypeScript project, the directory includes the following files and directories:
 
 - `chart/`: Helm chart
-- `manifests/`: Example CRD deployment manifests for Kubernetes clusters with Cosmonic Control
 - `wit/`: Directory for WebAssembly Interface Type (WIT) packages that define interfaces
 
 ## Building Locally

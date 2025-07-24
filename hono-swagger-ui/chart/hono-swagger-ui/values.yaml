@@ -14,7 +14,6 @@ component:
   image: ghcr.io/cosmonic-labs/components/hono-swagger-ui:0.1.0
   hostname: "localhost:9091"
   hostgroup: "default"
-  configAddress: "http://0.0.0.0:9091"
 
 # HTTP Provider in Cosmonic Control cosmonic-system namespace.
 # From the cosmonic-control-hostgroup chart with http.enabled=true

@@ -1,0 +1,13 @@
+# Wasm artifacts
+*.wasm
+.wash/
+
+# Rust build artifacts
+target/
+
+# Helm artifacts
+*.tgz
+
+# Junk
+.DS_Store
+

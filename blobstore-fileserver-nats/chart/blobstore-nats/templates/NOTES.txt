@@ -1,0 +1,9 @@
+The blobstore demo is serving on {{ .Values.component.hostname }}.
+
+If the component is serving on the default port 9091, open a port-forward to the host group to access the application:
+
+   kubectl -n cosmonic-system port-forward svc/hostgroup-default 9091:9091
+
+Call the application through the port-forward:
+
+   curl http://localhost:9091

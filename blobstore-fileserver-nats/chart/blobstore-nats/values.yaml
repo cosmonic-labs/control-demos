@@ -1,0 +1,23 @@
+# Default values for blobby-nats.
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This is for setting up a wasmCloud blobstore-nats provider. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#provider
+blobProvider:
+  image: ghcr.io/wasmcloud/blobstore-nats:6948263
+
+# This is for setting up a WebAssembly component. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#component
+component:
+  image: ghcr.io/cosmonic-labs/components/http-blobstore
+  tag: 0.1.0
+  hostname: "localhost:9091"
+
+# This is for setting up the blobstore-nats config. 
+# More information can be found here: https://cosmonic.com/docs/api-reference/runtime.wasmcloud.dev#config
+blobConfig:
+  configClusterUri: "nats://nats.default.svc.cluster.local:4222"
+  

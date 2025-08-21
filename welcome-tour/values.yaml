@@ -1,0 +1,19 @@
+# Values for welcome-tour sample
+
+component:
+  name: welcome-tour
+  image: ghcr.io/cosmonic-labs/components/welcome-tour:0.1.0
+  hostname: "localhost:9091"
+  hostgroup: "default"
+  concurrency: 100
+  replicas: 1
+  config:
+    address: "http://0.0.0.0:9091"
+    console_url: "http://localhost:8080"
+
+httpProvider:
+  hostgroup: default
+  namespace: cosmonic-system
+
+namespace:
+  name: default

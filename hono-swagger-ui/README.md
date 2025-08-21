@@ -15,16 +15,16 @@ helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup --versi
 
 ## Deploy with Cosmonic Control
 
-Deploy this template to a Kubernetes cluster with Cosmonic Control using the included Helm chart:
+Deploy this component to a Kubernetes cluster with Cosmonic Control using the shared HTTP sample chart:
 
 ```shell
-helm install hono-swagger-ui ./chart/hono-swagger-ui -n hono-swagger-ui --create-namespace
+helm install hono-swagger-ui ../../charts/http-sample -f values.yaml -n hono-swagger-ui --create-namespace
 ```
 
 The chart is also available as an OCI artifact:
 
 ```shell
-helm install hono-swagger-ui oci://ghcr.io/cosmonic-labs/charts/hono-swagger-ui -n hono-swagger-ui --create-namespace --version 0.1.0
+helm install hono-swagger-ui oci://ghcr.io/cosmonic-labs/charts/http-sample -f values.yaml -n hono-swagger-ui --create-namespace
 ```
 
 ## Running the Kubernetes demo
@@ -52,7 +52,7 @@ kubectl delete ns hono-swagger-ui
 
 In addition to the standard elements of a TypeScript project, the directory includes the following files and directories:
 
-- `chart/`: Helm chart
+- `values.yaml`: Helm values for the shared HTTP sample chart
 - `wit/`: Directory for WebAssembly Interface Type (WIT) packages that define interfaces
 
 ## Building Locally

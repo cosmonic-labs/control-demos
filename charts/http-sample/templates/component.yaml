@@ -1,0 +1,28 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Component
+metadata:
+  name: {{ include "http-sample.componentName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "http-sample.labels" . | nindent 4 }}
+spec:
+  image: {{ .Values.component.image }}
+  concurrency: {{ .Values.component.concurrency }}
+  replicas: {{ .Values.component.replicas }}
+  hostSelector:
+    matchLabels:
+      "hostgroup": "{{ .Values.httpProvider.hostgroup }}"
+  configFrom:
+    - name: {{ include "http-sample.configName" . }}
+  exports:
+    - wit:
+        namespace: wasi
+        package: http
+        interfaces:
+          - incoming-handler
+      target:
+        provider:
+          name: "http-{{ .Values.httpProvider.hostgroup }}"
+          namespace: {{ .Values.httpProvider.namespace }}
+        configFrom:
+          - name: {{ include "http-sample.configName" . }}

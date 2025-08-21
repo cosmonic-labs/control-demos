@@ -1,0 +1,274 @@
+---
+name: Build and publish HTTP sample components
+
+on:
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  TINYGO_VERSION: "0.33.0"
+  NODE_VERSION: "20"
+  HELM_VERSION: "3.14.0"
+
+jobs:
+  validate-release:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      version-valid: ${{ steps.version.outputs.valid }}
+    steps:
+      - name: Validate version format
+        id: version
+        run: |
+          VERSION="${{ github.ref_name }}"
+          if [[ $VERSION =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9-]+)?$ ]]; then
+            echo "valid=true" >> $GITHUB_OUTPUT
+            echo "version=${VERSION#v}" >> $GITHUB_OUTPUT
+            echo "✅ Valid version format: $VERSION"
+          else
+            echo "valid=false" >> $GITHUB_OUTPUT
+            echo "❌ Invalid version format: $VERSION"
+            exit 1
+          fi
+
+  build-http-server:
+    needs: validate-release
+    if: needs.validate-release.outputs.version-valid == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.push.outputs.image }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+          cache: true
+          cache-dependency-path: './http-server/go.sum'
+
+      - name: Cache TinyGo installation
+        id: cache-tinygo
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/tinygo
+          key: tinygo-${{ env.TINYGO_VERSION }}
+
+      - name: Install TinyGo
+        if: steps.cache-tinygo.outputs.cache-hit != 'true'
+        run: |
+          wget -q https://github.com/tinygo-org/tinygo/releases/download/v${{ env.TINYGO_VERSION }}/tinygo_${{ env.TINYGO_VERSION }}_amd64.deb
+          sudo dpkg -i tinygo_${{ env.TINYGO_VERSION }}_amd64.deb
+
+      - name: Setup wash CLI
+        uses: wasmCloud/setup-wash-action@v1
+        with:
+          wash-version: v0.35.0
+
+      - name: Build HTTP server component
+        working-directory: ./http-server
+        run: |
+          export PATH=$PATH:/usr/local/tinygo/bin
+          wash build --release
+
+      - name: Validate build output
+        working-directory: ./http-server/build
+        run: |
+          if [ ! -f *.wasm ]; then
+            echo "❌ No .wasm files found in build directory"
+            exit 1
+          fi
+          WASM_COUNT=$(ls -1 *.wasm | wc -l)
+          if [ "$WASM_COUNT" -ne 1 ]; then
+            echo "❌ Expected exactly 1 .wasm file, found: $WASM_COUNT"
+            ls -la *.wasm
+            exit 1
+          fi
+          echo "✅ Build validation passed"
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase repository owner
+        run: |
+          echo "REPO_OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
+      - name: Push HTTP server component
+        id: push
+        working-directory: ./http-server/build
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/components/http-server:${{ needs.validate-release.outputs.version }}"
+          wash oci push "$IMAGE" ./*.wasm
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          echo "✅ Published: $IMAGE"
+
+  build-hono-swagger-ui:
+    needs: validate-release
+    if: needs.validate-release.outputs.version-valid == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.push.outputs.image }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './hono-swagger-ui/package-lock.json'
+
+      - name: Setup wash CLI
+        uses: wasmCloud/setup-wash-action@v1
+        with:
+          wash-version: v0.35.0
+
+      - name: Build Hono Swagger UI component
+        working-directory: ./hono-swagger-ui
+        run: |
+          npm ci --prefer-offline
+          wash build --release
+
+      - name: Validate build output
+        working-directory: ./hono-swagger-ui/dist
+        run: |
+          if [ ! -f *.wasm ]; then
+            echo "❌ No .wasm files found in dist directory"
+            exit 1
+          fi
+          WASM_COUNT=$(ls -1 *.wasm | wc -l)
+          if [ "$WASM_COUNT" -ne 1 ]; then
+            echo "❌ Expected exactly 1 .wasm file, found: $WASM_COUNT"
+            ls -la *.wasm
+            exit 1
+          fi
+          echo "✅ Build validation passed"
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase repository owner
+        run: |
+          echo "REPO_OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
+      - name: Push Hono Swagger UI component
+        id: push
+        working-directory: ./hono-swagger-ui/dist
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/components/hono-swagger-ui:${{ needs.validate-release.outputs.version }}"
+          wash oci push "$IMAGE" ./*.wasm
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          echo "✅ Published: $IMAGE"
+
+  build-welcome-tour:
+    needs: validate-release
+    if: needs.validate-release.outputs.version-valid == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.push.outputs.image }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: './welcome-tour/package-lock.json'
+
+      - name: Setup wash CLI
+        uses: wasmCloud/setup-wash-action@v1
+        with:
+          wash-version: v0.35.0
+
+      - name: Build Welcome Tour component
+        working-directory: ./welcome-tour
+        run: |
+          npm ci --prefer-offline
+          wash build --release
+
+      - name: Validate build output
+        working-directory: ./welcome-tour/dist
+        run: |
+          if [ ! -f *.wasm ]; then
+            echo "❌ No .wasm files found in dist directory"
+            exit 1
+          fi
+          WASM_COUNT=$(ls -1 *.wasm | wc -l)
+          if [ "$WASM_COUNT" -ne 1 ]; then
+            echo "❌ Expected exactly 1 .wasm file, found: $WASM_COUNT"
+            ls -la *.wasm
+            exit 1
+          fi
+          echo "✅ Build validation passed"
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lowercase repository owner
+        run: |
+          echo "REPO_OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
+      - name: Push Welcome Tour component
+        id: push
+        working-directory: ./welcome-tour/dist
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/components/welcome-tour:${{ needs.validate-release.outputs.version }}"
+          wash oci push "$IMAGE" ./*.wasm
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          echo "✅ Published: $IMAGE"
+
+  summary:
+    needs: [validate-release, build-http-server, build-hono-swagger-ui, build-welcome-tour]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build Summary
+        run: |
+          echo "## 📦 Component Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.validate-release.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.build-http-server.result }}" == "success" ]; then
+            echo "✅ **HTTP Server:** ${{ needs.build-http-server.outputs.image }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **HTTP Server:** Build failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.build-hono-swagger-ui.result }}" == "success" ]; then
+            echo "✅ **Hono Swagger UI:** ${{ needs.build-hono-swagger-ui.outputs.image }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Hono Swagger UI:** Build failed" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "${{ needs.build-welcome-tour.result }}" == "success" ]; then
+            echo "✅ **Welcome Tour:** ${{ needs.build-welcome-tour.outputs.image }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Welcome Tour:** Build failed" >> $GITHUB_STEP_SUMMARY
+          fi

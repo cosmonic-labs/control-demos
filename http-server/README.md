@@ -20,16 +20,16 @@ helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup --versi
 
 ## Deploy with Cosmonic Control
 
-Deploy this template to a Kubernetes cluster with Cosmonic Control using the included Helm chart:
+Deploy this component to a Kubernetes cluster with Cosmonic Control using the shared HTTP sample chart:
 
 ```shell
-helm install http-server ./chart/http-server
+helm install http-server ../../charts/http-sample -f values.yaml
 ```
 
 The chart is also available as an OCI artifact:
 
 ```shell
-helm install http-server oci://ghcr.io/cosmonic-labs/charts/http-server
+helm install http-server oci://ghcr.io/cosmonic-labs/charts/http-sample -f values.yaml
 ```
 
 ## Running on Kubernetes
@@ -151,7 +151,7 @@ Hello World
 In addition to the standard elements of a Go project, the template directory includes the following files and directories:
 
 - `build/`: Target directory for compiled `.wasm` binaries
-- `chart/`: Helm chart
+- `values.yaml`: Helm values for the shared HTTP sample chart
 - `manifests/`: Example CRD deployment manifests for Kubernetes clusters with Cosmonic Control
 - `wit/`: Directory for WebAssembly Interface Type (WIT) packages that define interfaces
 

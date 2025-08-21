@@ -1,0 +1,15 @@
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: Config
+metadata:
+  name: {{ include "http-sample.configName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "http-sample.labels" . | nindent 4 }}
+spec:
+  config:
+    - name: host
+      value: "{{ .Values.component.hostname }}"
+    {{- range $key, $value := .Values.component.config }}
+    - name: {{ $key }}
+      value: {{ $value | quote }}
+    {{- end }}

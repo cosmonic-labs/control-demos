@@ -1,0 +1,17 @@
+# Values for hono-swagger-ui sample
+
+component:
+  name: hono-swagger-ui
+  image: ghcr.io/cosmonic-labs/components/hono-swagger-ui:0.1.0
+  hostname: "localhost:9091"
+  hostgroup: "default"
+  concurrency: 100
+  replicas: 1
+  config: {}
+
+httpProvider:
+  hostgroup: default
+  namespace: cosmonic-system
+
+namespace:
+  name: default

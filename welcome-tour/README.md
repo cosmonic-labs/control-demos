@@ -18,16 +18,16 @@ helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup --versi
 
 ## Deploy with Cosmonic Control
 
-Deploy this template to a Kubernetes cluster with Cosmonic Control using the included Helm chart:
+Deploy this component to a Kubernetes cluster with Cosmonic Control using the shared HTTP sample chart:
 
 ```shell
-helm install welcome-tour ./chart/welcome-tour -n welcome-app --create-namespace
+helm install welcome-tour ../../charts/http-sample -f values.yaml -n welcome-app --create-namespace
 ```
 
 The chart is also available as an OCI artifact:
 
 ```shell
-helm install welcome-tour oci://ghcr.io/cosmonic-labs/charts/welcome-tour -n welcome-app --create-namespace --version 0.1.0
+helm install welcome-tour oci://ghcr.io/cosmonic-labs/charts/http-sample -f values.yaml -n welcome-app --create-namespace
 ```
 
 ## Running the Kubernetes demo
@@ -65,7 +65,7 @@ kubectl delete ns cosmonic-system
 
 In addition to the standard elements of a TypeScript project, the directory includes the following files and directories:
 
-- `chart/`: Helm chart
+- `values.yaml`: Helm values for the shared HTTP sample chart
 - `manifests/`: Example CRD deployment manifests for Kubernetes clusters with Cosmonic Control
 - `wit/`: Directory for WebAssembly Interface Type (WIT) packages that define interfaces
 

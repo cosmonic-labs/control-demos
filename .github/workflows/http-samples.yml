@@ -74,7 +74,7 @@ jobs:
         working-directory: ./http-server
         run: |
           export PATH=$PATH:/usr/local/tinygo/bin
-          wash build --release
+          wash build
 
       - name: Validate build output
         working-directory: ./http-server/build
@@ -140,7 +140,7 @@ jobs:
         working-directory: ./hono-swagger-ui
         run: |
           npm ci --prefer-offline
-          wash build --release
+          wash build
 
       - name: Validate build output
         working-directory: ./hono-swagger-ui/dist
@@ -206,7 +206,7 @@ jobs:
         working-directory: ./welcome-tour
         run: |
           npm ci --prefer-offline
-          wash build --release
+          wash build
 
       - name: Validate build output
         working-directory: ./welcome-tour/dist

@@ -68,7 +68,7 @@ jobs:
       - name: Setup wash CLI
         uses: wasmCloud/setup-wash-action@main
         with:
-          wash-version: 1.0.0-beta.2
+          wash-version: wash-v1.0.0-beta.2
 
       - name: Build HTTP server component
         working-directory: ./http-server
@@ -134,7 +134,7 @@ jobs:
       - name: Setup wash CLI
         uses: wasmCloud/setup-wash-action@main
         with:
-          wash-version: 1.0.0-beta.2
+          wash-version: wash-v1.0.0-beta.2
 
       - name: Build Hono Swagger UI component
         working-directory: ./hono-swagger-ui
@@ -200,7 +200,7 @@ jobs:
       - name: Setup wash CLI
         uses: wasmCloud/setup-wash-action@main
         with:
-          wash-version: 1.0.0-beta.2
+          wash-version: wash-v1.0.0-beta.2
 
       - name: Build Welcome Tour component
         working-directory: ./welcome-tour

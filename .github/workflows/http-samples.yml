@@ -70,6 +70,11 @@ jobs:
         with:
           wash-version: wash-v1.0.0-beta.2
 
+      - name: Install wasm-tools
+        working-directory: ./http-server
+        run: |
+          cargo install --locked wasm-tools@1.225.0
+
       - name: Build HTTP server component
         working-directory: ./http-server
         run: |

@@ -4,8 +4,8 @@ name: Package and publish HTTP sample Helm chart
 on:
   workflow_run:
     workflows: ["Build and publish HTTP sample components"]
-    types: [completed]
-    branches: [main]
+    types: 
+      - completed
 
 env:
   REGISTRY: ghcr.io
@@ -13,7 +13,7 @@ env:
 jobs:
   publish-chart:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
       packages: write

@@ -2,14 +2,11 @@ module github.com/cosmonic-labs/control-demos/http-server
 
 go 1.24
 
-require (
-	go.bytecodealliance.org/cm v0.1.0
-	go.wasmcloud.dev/component v0.0.6
-)
+require go.wasmcloud.dev/component v0.0.6
 
 require (
 	go.bytecodealliance.org v0.5.0 // indirect
-	go.wasmcloud.dev/wadge v0.7.0 // indirect
+	go.bytecodealliance.org/cm v0.1.0 // indirect
 )
 
 require (
@@ -25,12 +22,9 @@ require (
 	github.com/ulikunitz/xz v0.5.12 // indirect
 	github.com/urfave/cli/v3 v3.0.0-beta1 // indirect
 	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/tools v0.29.0 // indirect
 )
 
-tool (
-	go.bytecodealliance.org/cmd/wit-bindgen-go
-)
+tool go.bytecodealliance.org/cmd/wit-bindgen-go

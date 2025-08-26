@@ -67,10 +67,10 @@ jobs:
           
           COMPONENTS=("http-server" "hono-swagger-ui" "welcome-tour")
           for component in "${COMPONENTS[@]}"; do
-            IMAGE="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/components/$component
-            echo "Checking: $IMAGE:${{ steps.release.outputs.version }}"
+            IMAGE="${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}"
+            echo "Checking: $IMAGE"
     
-            if helm pull $IMAGE --version ${{ steps.release.outputs.version }} --verify 2>/dev/null; then
+            if docker manifest inspect -v $IMAGE 2>/dev/null; then
               echo "✅ $component: Image exists"
             else
               echo "❌ $component: Image not found or not accessible"

@@ -134,27 +134,14 @@ jobs:
         run: |
           echo "🔄 Updating component image tags in values files..."
           
-          # Update each values file with the new image tags
-          FILES=(
-            "./http-server/charts/http-server/values.yaml"
-            "./hono-swagger-ui/charts/hono-swagger-ui/values.yaml" 
-            "./welcome-tour/charts/welcome-tour/values.yaml"
-          )
-          
           COMPONENTS=${{ env.COMPONENTS }}
-          
-          for i in "${!FILES[@]}"; do
-            file="${FILES[i]}"
-            component="${COMPONENTS[i]}"
-            
-            if [ -f "$file" ]; then
-              echo "Updating $file..."
-              # Use more specific regex to avoid false matches
-              sed -i "s|image: ghcr\.io/.*/components/$component:.*|image: ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}|" "$file"
-              echo "✅ Updated $component image tag"
-            else
-              echo "⚠️ File not found: $file"
-            fi
+          for component in "${COMPONENTS[@]}"; do
+            DEPLOYMENT_FILE="$component/chart/$component/values.yaml"
+            OLD_IMAGE=$(grep "image:" "$DEPLOYMENT_FILE" | awk '{print $2}')
+            NEW_IMAGE="ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}"
+            # Update the image tag
+            sed -i "s|image:.*|image: $NEW_IMAGE|" "$DEPLOYMENT_FILE"
+            echo "✅ Updated $component image tag"
           done
 
       - name: Validate updated values files
@@ -162,8 +149,8 @@ jobs:
           echo "🔍 Validating updated values files..."
           
           COMPONENTS=${{ env.COMPONENTS }}
-          for component in "http-server" "hono-swagger-ui" "welcome-tour"; do
-            file="./$component/chart/$component/values.yaml"
+          for component in "${COMPONENTS[@]}"; do
+            file="$component/chart/$component/values.yaml"
             if [ -f "$file" ]; then
               if grep -q "ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}" "$file"; then
                 echo "✅ $component: Image tag updated correctly"

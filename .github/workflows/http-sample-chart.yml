@@ -9,6 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
+  COMPONENTS: ("http-server" "hono-swagger-ui" "welcome-tour")
 
 jobs:
   publish-chart:
@@ -65,7 +66,7 @@ jobs:
         run: |
           echo "🔍 Verifying published component images..."
           
-          COMPONENTS=("http-server" "hono-swagger-ui" "welcome-tour")
+          COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             IMAGE="${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}"
             echo "Checking: $IMAGE"
@@ -81,6 +82,7 @@ jobs:
 
       - name: Update chart metadata
         run: |
+          COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             # Backup original Chart.yaml
             cp $component/chart/$component/Chart.yaml $component/chart/$component/Chart.yaml.bak
@@ -95,6 +97,7 @@ jobs:
 
       - name: Lint Helm charts
         run: |
+          COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             helm lint $component/chart/$component/Chart.yaml
             echo "✅ $component Helm chart validation passed"
@@ -102,6 +105,7 @@ jobs:
 
       - name: Package Helm charts
         run: |
+          COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             helm package $component/chart/$component/ --version ${{ steps.release.outputs.version }}
             CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
@@ -120,6 +124,7 @@ jobs:
           CHART_REF="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/charts"
           echo "📤 Pushing charts to: $CHART_REF"
           
+          COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             helm push $component-${{ steps.release.outputs.version }}.tgz $CHART_REF
             echo "✅ Chart $component-${{ steps.release.outputs.version }} published successfully"
@@ -131,12 +136,12 @@ jobs:
           
           # Update each values file with the new image tags
           FILES=(
-            "./http-server/values.yaml"
-            "./hono-swagger-ui/values.yaml" 
-            "./welcome-tour/values.yaml"
+            "./http-server/charts/http-server/values.yaml"
+            "./hono-swagger-ui/charts/hono-swagger-ui/values.yaml" 
+            "./welcome-tour/charts/welcome-tour/values.yaml"
           )
           
-          COMPONENTS=("http-server" "hono-swagger-ui" "welcome-tour")
+          COMPONENTS=${{ env.COMPONENTS }}
           
           for i in "${!FILES[@]}"; do
             file="${FILES[i]}"
@@ -156,8 +161,9 @@ jobs:
         run: |
           echo "🔍 Validating updated values files..."
           
+          COMPONENTS=${{ env.COMPONENTS }}
           for component in "http-server" "hono-swagger-ui" "welcome-tour"; do
-            file="./${component}/values.yaml"
+            file="./$component/chart/$component/values.yaml"
             if [ -f "$file" ]; then
               if grep -q "ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}" "$file"; then
                 echo "✅ $component: Image tag updated correctly"

@@ -164,6 +164,16 @@ jobs:
             fi
           done
 
+      - name: Clean up generated files
+        run: |
+          echo "🔍 Validating updated values files..."
+          
+          COMPONENTS=${{ env.COMPONENTS }}
+          for component in "${COMPONENTS[@]}"; do
+            rm $component-${{ steps.release.outputs.version }}.tgz
+            rm $component/chart/$component/Chart.yaml.bak
+          done
+
       - name: Create Pull Request for updated image tags
         uses: peter-evans/create-pull-request@v7
         with:

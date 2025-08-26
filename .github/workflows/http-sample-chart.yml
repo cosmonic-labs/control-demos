@@ -80,46 +80,50 @@ jobs:
           done
 
       - name: Update chart metadata
-        working-directory: ./charts/http-sample
         run: |
-          # Backup original Chart.yaml
-          cp Chart.yaml Chart.yaml.bak
+          for component in "${COMPONENTS[@]}"; do
+            # Backup original Chart.yaml
+            cp $component/chart/$component/Chart.yaml $component/chart/$component/Chart.yaml.bak
           
-          # Update versions
-          sed -i "s/version: .*/version: ${{ steps.release.outputs.version }}/" Chart.yaml
-          sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" Chart.yaml
+            # Update versions
+            sed -i "s/version: .*/version: ${{ steps.release.outputs.version }}/" $component/chart/$component/Chart.yaml
+            sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" $component/chart/$component/Chart.yaml
           
-          echo "📝 Updated Chart.yaml:"
-          diff Chart.yaml.bak Chart.yaml || true
+            echo "📝 Updated Chart.yaml:"
+            diff Chart.yaml.bak Chart.yaml || true
+          done
 
-      - name: Lint Helm chart
-        working-directory: ./charts/http-sample
+      - name: Lint Helm charts
         run: |
-          helm lint .
-          echo "✅ Helm chart validation passed"
+          for component in "${COMPONENTS[@]}"; do
+            helm lint $component/chart/$component/Chart.yaml
+            echo "✅ $component Helm chart validation passed"
+          done
 
-      - name: Package Helm chart
-        working-directory: ./charts/http-sample
+      - name: Package Helm charts
         run: |
-          helm package . --version "${{ steps.release.outputs.version }}"
-          CHART_FILE="http-sample-${{ steps.release.outputs.version }}.tgz"
+          for component in "${COMPONENTS[@]}"; do
+            helm package $component/chart/$component/ --version ${{ steps.release.outputs.version }}
+            CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
           
-          if [ ! -f "$CHART_FILE" ]; then
-            echo "❌ Chart package not created: $CHART_FILE"
-            exit 1
-          fi
+            if [ ! -f "$CHART_FILE" ]; then
+              echo "❌ Chart package not created: $CHART_FILE"
+              exit 1
+            fi
           
-          echo "✅ Chart packaged: $CHART_FILE"
-          echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
+            echo "✅ Chart packaged: $CHART_FILE"
+            echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
+          done
 
-      - name: Push Helm chart to OCI registry
-        working-directory: ./charts/http-sample
+      - name: Push Helm charts to OCI registry
         run: |
           CHART_REF="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/charts"
-          echo "📤 Pushing chart to: $CHART_REF"
+          echo "📤 Pushing charts to: $CHART_REF"
           
-          helm push "${{ env.CHART_FILE }}" "$CHART_REF"
-          echo "✅ Chart published successfully"
+          for component in "${COMPONENTS[@]}"; do
+            helm push $component-${{ steps.release.outputs.version }}.tgz $CHART_REF
+            echo "✅ Chart $component-${{ steps.release.outputs.version }} published successfully"
+          done
 
       - name: Update component image tags in values files
         run: |

@@ -99,7 +99,7 @@ jobs:
         run: |
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
-            helm lint $component/chart/$component/Chart.yaml
+            helm lint $component/chart/$component/
             echo "✅ $component Helm chart validation passed"
           done
 

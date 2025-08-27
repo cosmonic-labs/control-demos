@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  TINYGO_VERSION: "0.33.0"
+  TINYGO_VERSION: "0.38.0"
   NODE_VERSION: "20"
   HELM_VERSION: "3.14.0"
 
@@ -66,15 +66,20 @@ jobs:
           sudo dpkg -i tinygo_${{ env.TINYGO_VERSION }}_amd64.deb
 
       - name: Setup wash CLI
-        uses: wasmCloud/setup-wash-action@v1
+        uses: wasmCloud/setup-wash-action@main
         with:
-          wash-version: v0.35.0
+          wash-version: wash-v1.0.0-beta.2
+
+      - name: Install wasm-tools
+        working-directory: ./http-server
+        run: |
+          cargo install --locked wasm-tools@1.225.0
 
       - name: Build HTTP server component
         working-directory: ./http-server
         run: |
           export PATH=$PATH:/usr/local/tinygo/bin
-          wash build --release
+          wash build
 
       - name: Validate build output
         working-directory: ./http-server/build
@@ -132,15 +137,15 @@ jobs:
           cache-dependency-path: './hono-swagger-ui/package-lock.json'
 
       - name: Setup wash CLI
-        uses: wasmCloud/setup-wash-action@v1
+        uses: wasmCloud/setup-wash-action@main
         with:
-          wash-version: v0.35.0
+          wash-version: wash-v1.0.0-beta.2
 
       - name: Build Hono Swagger UI component
         working-directory: ./hono-swagger-ui
         run: |
           npm ci --prefer-offline
-          wash build --release
+          wash build
 
       - name: Validate build output
         working-directory: ./hono-swagger-ui/dist
@@ -198,15 +203,15 @@ jobs:
           cache-dependency-path: './welcome-tour/package-lock.json'
 
       - name: Setup wash CLI
-        uses: wasmCloud/setup-wash-action@v1
+        uses: wasmCloud/setup-wash-action@main
         with:
-          wash-version: v0.35.0
+          wash-version: wash-v1.0.0-beta.2
 
       - name: Build Welcome Tour component
         working-directory: ./welcome-tour
         run: |
           npm ci --prefer-offline
-          wash build --release
+          wash build
 
       - name: Validate build output
         working-directory: ./welcome-tour/dist

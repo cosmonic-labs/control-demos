@@ -4,16 +4,17 @@ name: Package and publish HTTP sample Helm chart
 on:
   workflow_run:
     workflows: ["Build and publish HTTP sample components"]
-    types: [completed]
-    branches: [main]
+    types: 
+      - completed
 
 env:
   REGISTRY: ghcr.io
+  COMPONENTS: ("http-server" "hono-swagger-ui" "welcome-tour")
 
 jobs:
   publish-chart:
     runs-on: ubuntu-latest
-    if: github.event.workflow_run.conclusion == 'success'
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: write
       packages: write
@@ -65,12 +66,12 @@ jobs:
         run: |
           echo "🔍 Verifying published component images..."
           
-          COMPONENTS=("http-server" "hono-swagger-ui" "welcome-tour")
+          COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             IMAGE="${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}"
             echo "Checking: $IMAGE"
-            
-            if helm oci registry pull "$IMAGE" --verify 2>/dev/null; then
+    
+            if docker manifest inspect -v $IMAGE 2>/dev/null; then
               echo "✅ $component: Image exists"
             else
               echo "❌ $component: Image not found or not accessible"
@@ -80,80 +81,76 @@ jobs:
           done
 
       - name: Update chart metadata
-        working-directory: ./charts/http-sample
         run: |
-          # Backup original Chart.yaml
-          cp Chart.yaml Chart.yaml.bak
+          COMPONENTS=${{ env.COMPONENTS }}
+          for component in "${COMPONENTS[@]}"; do
+            # Backup original Chart.yaml
+            cp $component/chart/$component/Chart.yaml $component/chart/$component/Chart.yaml.bak
           
-          # Update versions
-          sed -i "s/version: .*/version: ${{ steps.release.outputs.version }}/" Chart.yaml
-          sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" Chart.yaml
+            # Update versions
+            sed -i "s/version: .*/version: ${{ steps.release.outputs.version }}/" $component/chart/$component/Chart.yaml
+            sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" $component/chart/$component/Chart.yaml
           
-          echo "📝 Updated Chart.yaml:"
-          diff Chart.yaml.bak Chart.yaml || true
+            echo "📝 Updated Chart.yaml:"
+            diff Chart.yaml.bak Chart.yaml || true
+          done
 
-      - name: Lint Helm chart
-        working-directory: ./charts/http-sample
+      - name: Lint Helm charts
         run: |
-          helm lint .
-          echo "✅ Helm chart validation passed"
+          COMPONENTS=${{ env.COMPONENTS }}
+          for component in "${COMPONENTS[@]}"; do
+            helm lint $component/chart/$component/
+            echo "✅ $component Helm chart validation passed"
+          done
 
-      - name: Package Helm chart
-        working-directory: ./charts/http-sample
+      - name: Package Helm charts
         run: |
-          helm package . --version "${{ steps.release.outputs.version }}"
-          CHART_FILE="http-sample-${{ steps.release.outputs.version }}.tgz"
+          COMPONENTS=${{ env.COMPONENTS }}
+          for component in "${COMPONENTS[@]}"; do
+            helm package $component/chart/$component/ --version ${{ steps.release.outputs.version }}
+            CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
           
-          if [ ! -f "$CHART_FILE" ]; then
-            echo "❌ Chart package not created: $CHART_FILE"
-            exit 1
-          fi
+            if [ ! -f "$CHART_FILE" ]; then
+              echo "❌ Chart package not created: $CHART_FILE"
+              exit 1
+            fi
           
-          echo "✅ Chart packaged: $CHART_FILE"
-          echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
+            echo "✅ Chart packaged: $CHART_FILE"
+            echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
+          done
 
-      - name: Push Helm chart to OCI registry
-        working-directory: ./charts/http-sample
+      - name: Push Helm charts to OCI registry
         run: |
           CHART_REF="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/charts"
-          echo "📤 Pushing chart to: $CHART_REF"
+          echo "📤 Pushing charts to: $CHART_REF"
           
-          helm push "${{ env.CHART_FILE }}" "$CHART_REF"
-          echo "✅ Chart published successfully"
+          COMPONENTS=${{ env.COMPONENTS }}
+          for component in "${COMPONENTS[@]}"; do
+            helm push $component-${{ steps.release.outputs.version }}.tgz $CHART_REF
+            echo "✅ Chart $component-${{ steps.release.outputs.version }} published successfully"
+          done
 
       - name: Update component image tags in values files
         run: |
           echo "🔄 Updating component image tags in values files..."
           
-          # Update each values file with the new image tags
-          FILES=(
-            "./http-server/values.yaml"
-            "./hono-swagger-ui/values.yaml" 
-            "./welcome-tour/values.yaml"
-          )
-          
-          COMPONENTS=("http-server" "hono-swagger-ui" "welcome-tour")
-          
-          for i in "${!FILES[@]}"; do
-            file="${FILES[i]}"
-            component="${COMPONENTS[i]}"
-            
-            if [ -f "$file" ]; then
-              echo "Updating $file..."
-              # Use more specific regex to avoid false matches
-              sed -i "s|image: ghcr\.io/.*/components/$component:.*|image: ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}|" "$file"
-              echo "✅ Updated $component image tag"
-            else
-              echo "⚠️ File not found: $file"
-            fi
+          COMPONENTS=${{ env.COMPONENTS }}
+          for component in "${COMPONENTS[@]}"; do
+            DEPLOYMENT_FILE="$component/chart/$component/values.yaml"
+            OLD_IMAGE=$(grep "image:" "$DEPLOYMENT_FILE" | awk '{print $2}')
+            NEW_IMAGE="ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}"
+            # Update the image tag
+            sed -i "s|image:.*|image: $NEW_IMAGE|" "$DEPLOYMENT_FILE"
+            echo "✅ Updated $component image tag"
           done
 
       - name: Validate updated values files
         run: |
           echo "🔍 Validating updated values files..."
           
-          for component in "http-server" "hono-swagger-ui" "welcome-tour"; do
-            file="./${component}/values.yaml"
+          COMPONENTS=${{ env.COMPONENTS }}
+          for component in "${COMPONENTS[@]}"; do
+            file="$component/chart/$component/values.yaml"
             if [ -f "$file" ]; then
               if grep -q "ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}" "$file"; then
                 echo "✅ $component: Image tag updated correctly"
@@ -165,6 +162,16 @@ jobs:
                 exit 1
               fi
             fi
+          done
+
+      - name: Clean up generated files
+        run: |
+          echo "🔍 Validating updated values files..."
+          
+          COMPONENTS=${{ env.COMPONENTS }}
+          for component in "${COMPONENTS[@]}"; do
+            rm $component-${{ steps.release.outputs.version }}.tgz
+            rm $component/chart/$component/Chart.yaml.bak
           done
 
       - name: Create Pull Request for updated image tags

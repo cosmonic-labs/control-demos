@@ -82,42 +82,43 @@ jobs:
 
       - name: Update chart metadata
         run: |
-          COMPONENTS=${{ env.COMPONENTS }}
-          for component in "${COMPONENTS[@]}"; do
-            # Backup original Chart.yaml
-            cp $component/chart/$component/Chart.yaml $component/chart/$component/Chart.yaml.bak
+          # Backup original Chart.yaml
+          cp charts/http-sample/Chart.yaml charts/http-sample/Chart.yaml.bak
           
-            # Update versions
-            sed -i "s/version: .*/version: ${{ steps.release.outputs.version }}/" $component/chart/$component/Chart.yaml
-            sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" $component/chart/$component/Chart.yaml
+          # Update versions
+          sed -i "s/version: .*/version: ${{ steps.release.outputs.version }}/" charts/http-sample/Chart.yaml
+          sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" charts/http-sample/Chart.yaml
           
-            echo "📝 Updated Chart.yaml:"
-            diff Chart.yaml.bak Chart.yaml || true
-          done
+          echo "📝 Updated Chart.yaml:"
+          diff Chart.yaml.bak Chart.yaml || true
 
-      - name: Lint Helm charts
+      - name: Lint Helm chart template
         run: |
-          COMPONENTS=${{ env.COMPONENTS }}
-          for component in "${COMPONENTS[@]}"; do
-            helm lint $component/chart/$component/
-            echo "✅ $component Helm chart validation passed"
-          done
+          helm lint charts/http-sample/
+          echo "✅ Helm chart validation passed"
 
       - name: Package Helm charts
         run: |
           COMPONENTS=${{ env.COMPONENTS }}
+          cp charts/http-sample/values.yaml values.yaml.bak
+          rm charts/http-sample/values.yaml
           for component in "${COMPONENTS[@]}"; do
-            helm package $component/chart/$component/ --version ${{ steps.release.outputs.version }}
+            cp $component/values.yaml charts/http-sample/values.yaml
+            helm package charts/http-sample --version ${{ steps.release.outputs.version }}
+            cp http-sample-${{ steps.release.outputs.version }}.tgz $component-${{ steps.release.outputs.version }}.tgz
+            rm http-sample-${{ steps.release.outputs.version }}.tgz
             CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
           
             if [ ! -f "$CHART_FILE" ]; then
               echo "❌ Chart package not created: $CHART_FILE"
               exit 1
             fi
-          
+            rm charts/http-sample/values.yaml
             echo "✅ Chart packaged: $CHART_FILE"
             echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
           done
+          cp values.yaml.bak charts/http-sample/values.yaml
+          rm values.yaml.bak
 
       - name: Push Helm charts to OCI registry
         run: |
@@ -136,7 +137,7 @@ jobs:
           
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
-            DEPLOYMENT_FILE="$component/chart/$component/values.yaml"
+            DEPLOYMENT_FILE="$component/values.yaml"
             OLD_IMAGE=$(grep "image:" "$DEPLOYMENT_FILE" | awk '{print $2}')
             NEW_IMAGE="ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}"
             # Update the image tag
@@ -150,7 +151,7 @@ jobs:
           
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
-            file="$component/chart/$component/values.yaml"
+            file="$component/values.yaml"
             if [ -f "$file" ]; then
               if grep -q "ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}" "$file"; then
                 echo "✅ $component: Image tag updated correctly"
@@ -171,7 +172,7 @@ jobs:
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             rm $component-${{ steps.release.outputs.version }}.tgz
-            rm $component/chart/$component/Chart.yaml.bak
+            rm charts/http-sample/Chart.yaml.bak
           done
 
       - name: Create Pull Request for updated image tags

@@ -98,47 +98,27 @@ jobs:
           helm lint charts/http-sample/
           echo "✅ Helm chart validation passed"
 
-      - name: Package Helm charts
+      - name: Package Helm chart
         working-directory: ./
         run: |
-          COMPONENTS=${{ env.COMPONENTS }}
-          cp ./charts/http-sample/values.yaml values.yaml.bak
-          rm ./charts/http-sample/values.yaml
-
-          for component in "${COMPONENTS[@]}"; do
-              cp -r ./charts/http-sample ./charts/$component
-              cp ./$component/values.yaml ./charts/$component/values.yaml
-              sed -i 's|^  name:.*|  name: "$component"|' charts/$component/Chart.yaml
-              cat charts/$component/Chart.yaml
-              helm package charts/$component --version ${{ steps.release.outputs.version }}
-              CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
+          helm package charts/http-sample --version ${{ steps.release.outputs.version }}
+          CHART_FILE="http-sample-${{ steps.release.outputs.version }}.tgz"
           
-              if [ ! -f "$CHART_FILE" ]; then
-                  echo "❌ Chart package not created: $CHART_FILE"
-                  exit 1
-              fi
-
+          if [ ! -f "$CHART_FILE" ]; then
+              echo "❌ Chart package not created: $CHART_FILE"
+              exit 1
+          fi
               echo "✅ Chart packaged: $CHART_FILE"
               echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
           done
 
-          cp ./values.yaml.bak ./charts/http-sample/values.yaml
-          rm ./values.yaml.bak
-
-      - name: Push Helm charts to OCI registry
+      - name: Push Helm chart to OCI registry
         run: |
           CHART_REF="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/charts/"
           echo "📤 Pushing charts to: $CHART_REF"
-          ls
           
-          helm push http-server-${{ steps.release.outputs.version }}.tgz $CHART_REF
+          helm push http-sample-${{ steps.release.outputs.version }}.tgz $CHART_REF
           echo "✅ Chart http-server-${{ steps.release.outputs.version }} published successfully"
-
-          helm push hono-swagger-ui-${{ steps.release.outputs.version }}.tgz $CHART_REF
-          echo "✅ Chart hono-swagger-ui-${{ steps.release.outputs.version }} published successfully"
-
-          helm push welcome-tour-${{ steps.release.outputs.version }}.tgz $CHART_REF
-          echo "✅ Chart welcome-tour-${{ steps.release.outputs.version }} published successfully"
 
       - name: Update component image tags in values files
         run: |
@@ -172,16 +152,6 @@ jobs:
                 exit 1
               fi
             fi
-          done
-
-      - name: Clean up generated files
-        run: |
-          echo "🔍 Validating updated values files..."
-          sed -i 's|^  name:.*|  name: "http-sample"|' charts/http-sample/Chart.yaml
-          COMPONENTS=${{ env.COMPONENTS }}
-          for component in "${COMPONENTS[@]}"; do
-            rm ./$component-${{ steps.release.outputs.version }}.tgz
-            rm -rf ./charts/$component/
           done
 
       - name: Create Pull Request for updated image tags

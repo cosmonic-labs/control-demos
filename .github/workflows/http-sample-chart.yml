@@ -110,7 +110,6 @@ jobs:
           fi
               echo "✅ Chart packaged: $CHART_FILE"
               echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
-          done
 
       - name: Push Helm chart to OCI registry
         run: |

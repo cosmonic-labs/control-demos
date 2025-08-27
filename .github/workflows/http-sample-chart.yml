@@ -104,23 +104,24 @@ jobs:
           COMPONENTS=${{ env.COMPONENTS }}
           cp ./charts/http-sample/values.yaml values.yaml.bak
           rm ./charts/http-sample/values.yaml
+
           for component in "${COMPONENTS[@]}"; do
-            cp ./$component/values.yaml ./charts/http-sample/values.yaml
-            sed -i 's|^  name:.*|  name: "$component"|' charts/http-sample/Chart.yaml
-            helm package charts/http-sample --version ${{ steps.release.outputs.version }}
-            cp ./http-sample-${{ steps.release.outputs.version }}.tgz ./$component-${{ steps.release.outputs.version }}.tgz
-            rm ./http-sample-${{ steps.release.outputs.version }}.tgz
-            ls
-            CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
+              cp -r ./charts/http-sample ./charts/$component
+              cp ./$component/values.yaml ./charts/$component/values.yaml
+              sed -i 's|^  name:.*|  name: "$component"|' charts/$component/Chart.yaml
+              cat charts/$component/Chart.yaml
+              helm package charts/$component --version ${{ steps.release.outputs.version }}
+              CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
           
-            if [ ! -f "$CHART_FILE" ]; then
-              echo "❌ Chart package not created: $CHART_FILE"
-              exit 1
-            fi
-            rm ./charts/http-sample/values.yaml
-            echo "✅ Chart packaged: $CHART_FILE"
-            echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
+              if [ ! -f "$CHART_FILE" ]; then
+                  echo "❌ Chart package not created: $CHART_FILE"
+                  exit 1
+              fi
+
+              echo "✅ Chart packaged: $CHART_FILE"
+              echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
           done
+
           cp ./values.yaml.bak ./charts/http-sample/values.yaml
           rm ./values.yaml.bak
 
@@ -180,6 +181,7 @@ jobs:
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             rm ./$component-${{ steps.release.outputs.version }}.tgz
+            rm -rf ./charts/$component/
           done
 
       - name: Create Pull Request for updated image tags

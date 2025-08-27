@@ -81,6 +81,7 @@ jobs:
           done
 
       - name: Update chart metadata
+        working-directory: ./
         run: |
           # Backup original Chart.yaml
           cp charts/http-sample/Chart.yaml charts/http-sample/Chart.yaml.bak
@@ -98,27 +99,28 @@ jobs:
           echo "✅ Helm chart validation passed"
 
       - name: Package Helm charts
+        working-directory: ./
         run: |
           COMPONENTS=${{ env.COMPONENTS }}
-          cp charts/http-sample/values.yaml values.yaml.bak
-          rm charts/http-sample/values.yaml
+          cp ./charts/http-sample/values.yaml values.yaml.bak
+          rm ./charts/http-sample/values.yaml
           for component in "${COMPONENTS[@]}"; do
-            cp $component/values.yaml charts/http-sample/values.yaml
+            cp ./$component/values.yaml ./charts/http-sample/values.yaml
             helm package charts/http-sample --version ${{ steps.release.outputs.version }}
-            cp http-sample-${{ steps.release.outputs.version }}.tgz $component-${{ steps.release.outputs.version }}.tgz
-            rm http-sample-${{ steps.release.outputs.version }}.tgz
+            cp ./http-sample-${{ steps.release.outputs.version }}.tgz ./$component-${{ steps.release.outputs.version }}.tgz
+            rm ./http-sample-${{ steps.release.outputs.version }}.tgz
             CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
           
             if [ ! -f "$CHART_FILE" ]; then
               echo "❌ Chart package not created: $CHART_FILE"
               exit 1
             fi
-            rm charts/http-sample/values.yaml
+            rm ./charts/http-sample/values.yaml
             echo "✅ Chart packaged: $CHART_FILE"
             echo "CHART_FILE=$CHART_FILE" >> $GITHUB_ENV
           done
-          cp values.yaml.bak charts/http-sample/values.yaml
-          rm values.yaml.bak
+          cp ./values.yaml.bak ./charts/http-sample/values.yaml
+          rm ./values.yaml.bak
 
       - name: Push Helm charts to OCI registry
         run: |
@@ -171,8 +173,8 @@ jobs:
           
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
-            rm $component-${{ steps.release.outputs.version }}.tgz
-            rm charts/http-sample/Chart.yaml.bak
+            rm ./$component-${{ steps.release.outputs.version }}.tgz
+            rm ./charts/http-sample/Chart.yaml.bak
           done
 
       - name: Create Pull Request for updated image tags

@@ -90,7 +90,7 @@ jobs:
           sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" charts/http-sample/Chart.yaml
           
           echo "📝 Updated Chart.yaml:"
-          diff Chart.yaml.bak Chart.yaml || true
+          diff charts/http-sample/Chart.yaml.bak charts/http-sample/Chart.yaml || true
 
       - name: Lint Helm chart template
         run: |

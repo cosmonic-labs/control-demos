@@ -106,9 +106,11 @@ jobs:
           rm ./charts/http-sample/values.yaml
           for component in "${COMPONENTS[@]}"; do
             cp ./$component/values.yaml ./charts/http-sample/values.yaml
+            sed -i "s/name: .*/name: $component" charts/http-sample/Chart.yaml
             helm package charts/http-sample --version ${{ steps.release.outputs.version }}
             cp ./http-sample-${{ steps.release.outputs.version }}.tgz ./$component-${{ steps.release.outputs.version }}.tgz
             rm ./http-sample-${{ steps.release.outputs.version }}.tgz
+            ls
             CHART_FILE="$component-${{ steps.release.outputs.version }}.tgz"
           
             if [ ! -f "$CHART_FILE" ]; then
@@ -126,6 +128,7 @@ jobs:
         run: |
           CHART_REF="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/charts"
           echo "📤 Pushing charts to: $CHART_REF"
+          ls
           
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
@@ -170,11 +173,10 @@ jobs:
       - name: Clean up generated files
         run: |
           echo "🔍 Validating updated values files..."
-          
+          sed -i "s/name: .*/name: http-sample" charts/http-sample/Chart.yaml
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             rm ./$component-${{ steps.release.outputs.version }}.tgz
-            rm ./charts/http-sample/Chart.yaml.bak
           done
 
       - name: Create Pull Request for updated image tags

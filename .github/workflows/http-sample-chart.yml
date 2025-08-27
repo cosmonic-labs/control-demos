@@ -106,7 +106,7 @@ jobs:
           rm ./charts/http-sample/values.yaml
           for component in "${COMPONENTS[@]}"; do
             cp ./$component/values.yaml ./charts/http-sample/values.yaml
-            sed -i "s/name: .*/name: $component" charts/http-sample/Chart.yaml
+            sed -i 's|^  name:.*|  name: "$component"|' charts/http-sample/Chart.yaml
             helm package charts/http-sample --version ${{ steps.release.outputs.version }}
             cp ./http-sample-${{ steps.release.outputs.version }}.tgz ./$component-${{ steps.release.outputs.version }}.tgz
             rm ./http-sample-${{ steps.release.outputs.version }}.tgz
@@ -173,7 +173,7 @@ jobs:
       - name: Clean up generated files
         run: |
           echo "🔍 Validating updated values files..."
-          sed -i "s/name: .*/name: http-sample" charts/http-sample/Chart.yaml
+          sed -i 's|^  name:.*|  name: "http-sample"|' charts/http-sample/Chart.yaml
           COMPONENTS=${{ env.COMPONENTS }}
           for component in "${COMPONENTS[@]}"; do
             rm ./$component-${{ steps.release.outputs.version }}.tgz

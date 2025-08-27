@@ -126,15 +126,18 @@ jobs:
 
       - name: Push Helm charts to OCI registry
         run: |
-          CHART_REF="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/charts"
+          CHART_REF="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/charts/"
           echo "📤 Pushing charts to: $CHART_REF"
           ls
           
-          COMPONENTS=${{ env.COMPONENTS }}
-          for component in "${COMPONENTS[@]}"; do
-            helm push $component-${{ steps.release.outputs.version }}.tgz $CHART_REF
-            echo "✅ Chart $component-${{ steps.release.outputs.version }} published successfully"
-          done
+          helm push http-server-${{ steps.release.outputs.version }}.tgz $CHART_REF
+          echo "✅ Chart http-server-${{ steps.release.outputs.version }} published successfully"
+
+          helm push hono-swagger-ui-${{ steps.release.outputs.version }}.tgz $CHART_REF
+          echo "✅ Chart hono-swagger-ui-${{ steps.release.outputs.version }} published successfully"
+
+          helm push welcome-tour-${{ steps.release.outputs.version }}.tgz $CHART_REF
+          echo "✅ Chart welcome-tour-${{ steps.release.outputs.version }} published successfully"
 
       - name: Update component image tags in values files
         run: |

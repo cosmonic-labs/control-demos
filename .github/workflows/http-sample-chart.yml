@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  COMPONENTS: ("http-server" "hono-swagger-ui" "welcome-tour")
+  COMPONENTS: "http-server hono-swagger-ui welcome-tour"
 
 jobs:
   publish-chart:

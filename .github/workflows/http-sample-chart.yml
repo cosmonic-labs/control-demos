@@ -66,8 +66,7 @@ jobs:
         run: |
           echo "🔍 Verifying published component images..."
           
-          COMPONENTS=${{ env.COMPONENTS }}
-          for component in "${COMPONENTS[@]}"; do
+          for component in ${{ env.COMPONENTS }}; do
             IMAGE="${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}"
             echo "Checking: $IMAGE"
     
@@ -124,8 +123,7 @@ jobs:
         run: |
           echo "🔄 Updating component image tags in values files..."
           
-          COMPONENTS=${{ env.COMPONENTS }}
-          for component in "${COMPONENTS[@]}"; do
+          for component in ${{ env.COMPONENTS }}; do
             DEPLOYMENT_FILE="$component/values.yaml"
             OLD_IMAGE=$(grep "image:" "$DEPLOYMENT_FILE" | awk '{print $2}')
             NEW_IMAGE="ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}"
@@ -138,8 +136,7 @@ jobs:
         run: |
           echo "🔍 Validating updated values files..."
           
-          COMPONENTS=${{ env.COMPONENTS }}
-          for component in "${COMPONENTS[@]}"; do
+          for component in ${{ env.COMPONENTS }}; do
             file="$component/values.yaml"
             if [ -f "$file" ]; then
               if grep -q "ghcr.io/${{ env.REPO_OWNER_LC }}/components/$component:${{ steps.release.outputs.version }}" "$file"; then

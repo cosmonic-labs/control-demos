@@ -92,6 +92,7 @@ jobs:
           
           echo "📝 Updated Chart.yaml:"
           diff charts/http-sample/Chart.yaml.bak charts/http-sample/Chart.yaml || true
+          rm charts/http-sample/Chart.yaml.bak
 
       - name: Lint Helm chart template
         run: |

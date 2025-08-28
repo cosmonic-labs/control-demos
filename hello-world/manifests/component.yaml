@@ -3,7 +3,7 @@ kind: Component
 metadata:
   name: hello-world
 spec:
-  image: ghcr.io/cosmonic-labs/components/hello-world:1.0.0
+  image: ghcr.io/cosmonic-labs/components/hello-world:0.1.0
   concurrency: 100
   replicas: 1
   hostSelector:

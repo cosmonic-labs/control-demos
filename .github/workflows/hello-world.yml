@@ -27,7 +27,7 @@ jobs:
      - name: Setup wash CLI
        uses: wasmCloud/setup-wash-action@main
        with:
-         wash-version: wash-v1.0.0-beta.2
+         wash-version: wash-v1.0.0-beta.4
 
      - name: Install wasm32-wasip2 target for Rust
        run: |

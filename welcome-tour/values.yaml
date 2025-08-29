@@ -2,7 +2,7 @@
 
 component:
   name: welcome-tour
-  image: ghcr.io/cosmonic-labs/control-demos/welcome-tour:0.1.0
+  image: ghcr.io/cosmonic-labs/control-demos/welcome-tour:0.1.2
   hostname: "localhost:9091"
   hostgroup: "default"
   concurrency: 100

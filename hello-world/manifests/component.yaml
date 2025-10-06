@@ -1,32 +1,17 @@
-apiVersion: runtime.wasmcloud.dev/v1alpha1
-kind: Component
+apiVersion: control.cosmonic.io/v1alpha1
+kind: HTTPTrigger
 metadata:
   name: hello-world
+  namespace: default
 spec:
-  image: ghcr.io/cosmonic-labs/control-demos/hello-world:0.1.2
-  concurrency: 100
   replicas: 1
-  hostSelector:
-    matchLabels:
-      "hostgroup": "default"
-  exports:
-    - wit:
-        namespace: wasi
-        package: http
-        interfaces:
-          - incoming-handler
-      target:
-        provider:
-          name: http-default
-          namespace: cosmonic-system
-        configFrom:
-          - name: hello-world-config
----
-apiVersion: runtime.wasmcloud.dev/v1alpha1
-kind: Config
-metadata:
-  name: hello-world-config
-spec:
-  config:
-    - name: host
-      value: "localhost:9091"
+  ingress:
+    host: "hello.localhost.cosmonic.sh"
+    paths:
+      - path: /
+        pathType: Prefix
+  template:
+    spec:
+      components:
+        - name: http
+          image: ghcr.io/cosmonic-labs/control-demos/hello-world:0.1.2

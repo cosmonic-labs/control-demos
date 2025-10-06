@@ -82,44 +82,29 @@ Modify `hello-proj.yaml` to update the `repoURL` on Line 9 to target your new fo
 - repoURL: https://github.com/cosmonic-labs/control-demos.git
 ```
 
-The Argo Application is now targeting a manifest file in the `hello-world` directory of your control-demos fork. Let's take a quick look at the component's manifest:
+The Argo Application is now targeting a manifest file in the `hello-world` directory of your control-demos fork. Let's take a quick look at the component's manifest, which uses the [HTTPTrigger custom resource](https://cosmonic.com/docs/custom-resources/#httptrigger) for simple deployments of HTTP components:
 
 ```yaml
-apiVersion: runtime.wasmcloud.dev/v1alpha1
-kind: Component
+apiVersion: control.cosmonic.io/v1alpha1
+kind: HTTPTrigger
 metadata:
   name: hello-world
+  namespace: default
 spec:
-  image: ghcr.io/cosmonic-labs/control-demos/hello-world:1.0.0
-  concurrency: 100
   replicas: 1
-  hostSelector:
-    matchLabels:
-      "hostgroup": "default"
-  exports:
-    - wit:
-        namespace: wasi
-        package: http
-        interfaces:
-          - incoming-handler
-      target:
-        provider:
-          name: http-default
-          namespace: cosmonic-system
-        configFrom:
-          - name: hello-world-config
----
-apiVersion: runtime.wasmcloud.dev/v1alpha1
-kind: Config
-metadata:
-  name: hello-world-config
-spec:
-  config:
-    - name: host
-      value: "localhost:9091"
+  ingress:
+    host: "hello.localhost.cosmonic.sh"
+    paths:
+      - path: /
+        pathType: Prefix
+  template:
+    spec:
+      components:
+        - name: http
+          image: ghcr.io/cosmonic-labs/control-demos/hello-world:0.1.2
 ```
 
-Don't make any changes at this stage, but note the OCI artifact we're using on Line 6: it's in the `cosmonic-labs` namespace and tagged `1.0.0`.
+Don't make any changes at this stage, but note the OCI artifact we're using on Line 17: it's in the `cosmonic-labs` namespace and tagged `0.1.2`.
 
 Now apply the `hello-proj.yaml` Argo Application CRD manifest from `integrations/argo-cd/`:
 
@@ -152,7 +137,7 @@ Now we'll create a release in GitHub. Click "Create a new release" in the right 
 
 ![Create a new release](./img/create-a-new-release.webp)
 
-Let's call our release `1.1.0`. Create a new image tag, title the release, and click "Publish release."
+Let's call our release `2.0.0`. Create a new image tag, title the release, and click "Publish release."
 
 ![Publish release](./img/publish-release.webp)
 
@@ -187,7 +172,7 @@ In the meantime, let's take a look at the last steps of the GitHub Workflow file
          title: Update image tag in manifest to ${{ github.ref_name }}
 ```
 
-After building the component from your repo, the run submits a pull request updating the image specification in the hello-world manifest that our Argo CD hello-world Application is targeting, so that the manifest specifies a 1.1.0 image in *your* GHCR registry. This change to the manifest will trigger a sync in Argo CD.
+After building the component from your repo, the run submits a pull request updating the image specification in the hello-world manifest that our Argo CD hello-world Application is targeting, so that the manifest specifies a 2.0.0 image in *your* GHCR registry. This change to the manifest will trigger a sync in Argo CD.
 
 Once the run completes successfully, merge the automated pull request, switch over to the Argo CD dashboard, and take a look at the hello-world Application. You should see that it has synced. 
 

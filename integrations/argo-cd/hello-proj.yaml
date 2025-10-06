@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/ericgregory/control-demos.git
+    repoURL: https://github.com/cosmonic-labs/control-demos.git
     targetRevision: HEAD
     path: hello-world/manifests
   destination:

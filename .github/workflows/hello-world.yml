@@ -1,6 +1,6 @@
 name: Build Wasm component from Rust and push to OCI registry
 
-on: 
+on:
   release:
     types: [published]
 
@@ -11,52 +11,29 @@ jobs:
       contents: write
       packages: write
       pull-requests: write
-    
+
     steps:
-     - name: Checkout repository
-       uses: actions/checkout@v4
-       with:
-        repository: ${{ github.repository_owner }}/${{ github.event.repository.name }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-     - name: Fetch repository content
-       run: |
-          git fetch origin
-          git checkout main
-     
-     - name: Setup wash CLI
-       uses: wasmCloud/setup-wash-action@main
-       with:
-         wash-version: wash-v1.0.0-beta.4
+      - name: Setup wash CLI
+        uses: wasmcloud/setup-wash-action@v1.0.0-rc.3
 
-     - name: Install wasm32-wasip2 target for Rust
-       run: |
-          rustup target add wasm32-wasip2
+      - name: Build Wasm component
+        id: build
+        uses: wasmCloud/actions/wash-build@v0.2.0
+        with:
+          working-directory: ./hello-world
 
-     - name: Compile Wasm binary
-       working-directory: ./hello-world
-       run: |
-          wash build
+      - name: Publish Wasm component
+        uses: wasmcloud/actions/wash-oci-publish@v0.2.0
+        with:
+          component_path: ${{ steps.build.outputs.component_path }}
+          image_tags: ${{ github.ref_name }}
 
-     - name: Login to GHCR
-       uses: docker/login-action@v3
-       with:
-         registry: ghcr.io
-         username: ${{ github.repository_owner }}
-         password: ${{ secrets.GITHUB_TOKEN }}
-
-     - name: Lowercase the organization name for ghcr.io
-       run: |
-          echo "GHCR_REPO_NAMESPACE=${GITHUB_REPOSITORY_OWNER,,}" >>${GITHUB_ENV}
-
-     - name: Push Wasm component to ghcr.io
-       working-directory: ./hello-world/target/wasm32-wasip2/debug/
-       run: |
-          wash oci push ghcr.io/${{ env.GHCR_REPO_NAMESPACE }}/control-demos/hello-world:${{ github.ref_name }} ./hello_world.wasm
-
-     - name: Update image tag in Kubernetes manifest
-       working-directory: ./hello-world
-       run: |
+      - name: Update image tag in Kubernetes manifest
+        working-directory: ./hello-world
+        run: |
           DEPLOYMENT_FILE="manifests/component.yaml"
           OLD_IMAGE=$(grep "image:" "$DEPLOYMENT_FILE" | awk '{print $2}')
           NEW_IMAGE="ghcr.io/${{ env.GHCR_REPO_NAMESPACE }}/control-demos/hello-world:${{ github.ref_name }}"
@@ -64,10 +41,10 @@ jobs:
           # Update the image tag
           sed -i "s|image:.*|image: $NEW_IMAGE|" "$DEPLOYMENT_FILE"
 
-     - name: Create Pull Request
-       uses: peter-evans/create-pull-request@v7
-       with:
-         token: ${{ secrets.GITHUB_TOKEN }}
-         commit-message: |
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
             Update image tag in manifest to ${{ github.ref_name }}
-         title: Update image tag in manifest to ${{ github.ref_name }}
+          title: Update image tag in manifest to ${{ github.ref_name }}

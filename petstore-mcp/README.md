@@ -67,7 +67,7 @@ helm install hono-swagger-ui --version 0.1.2 oci://ghcr.io/cosmonic-labs/charts/
 
 ## Running on Kubernetes
 
-The MCP server will serve at <petstore-mcp.localhost.cosmonic.sh/v1/mcp>
+The MCP server will serve at [http://petstore-mcp.localhost.cosmonic.sh/v1/mcp](http://petstore-mcp.localhost.cosmonic.sh/v1/mcp)
 
 If you'd like to debug your MCP server, you can start [the official MCP model inspector](https://github.com/modelcontextprotocol/inspector) via the following command:
 

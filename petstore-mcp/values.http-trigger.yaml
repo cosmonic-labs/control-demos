@@ -5,3 +5,5 @@ components:
 
 ingress:
   host: "petstore-mcp.localhost.cosmonic.sh"
+
+pathNote: "/v1/mcp"

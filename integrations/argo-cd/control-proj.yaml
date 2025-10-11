@@ -15,6 +15,10 @@ spec:
     helm:
       valuesObject: 
         cosmonicLicenseKey: "<insert license here>"
+        envoy:
+          service:
+            type: NodePort
+            httpNodePort: 30950
   destination:
     name: "in-cluster"
     namespace: cosmonic-system

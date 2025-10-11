@@ -4,10 +4,34 @@ This repository includes an Argo CD Application CRD manifest that can be used to
 
 ## Requirements
 
-* Kubernetes cluster with CoreDNS. (This guide was written using [`kind`](https://kind.sigs.k8s.io/) version 0.27.0, which includes CoreDNS by default.)
 * [`kubectl`](https://kubernetes.io/releases/download/)
 * [Helm](https://helm.sh/docs) v3.8.0+
 * [GitHub account](https://github.com/signup)
+* [Free trial key](https://cosmonic.com/trial) for Cosmonic Control
+
+## Install local Kubernetes environment
+
+Install `kind` with the following `kind-config.yaml` configuration:
+
+```yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+# One control plane node and three "workers."
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 30950
+    hostPort: 80
+    protocol: TCP
+```
+
+This will help enable simple local ingress with Envoy.
+
+Start the cluster:
+
+```shell
+kind create cluster --config=kind-config.yaml
+```
 
 ## Fork the repository
 
@@ -184,16 +208,10 @@ You can click through to see the commit that triggered the sync, or click on the
 
 ## Test the deployment
 
-Port-forward to access the hello-world component at [localhost:9091](http://localhost:9091):
-
-```shell
-kubectl -n cosmonic-system port-forward svc/hostgroup-default 9091:9091
-```
-
 In a new terminal tab:
 
 ```shell
-curl localhost:9091
+curl http://hello.localhost.cosmonic.sh
 ```
 ```text
 Hello from Cosmonic Control and Argo CD!
@@ -212,13 +230,9 @@ kubectl delete -f hostgroup-proj.yaml
 ```shell
 kubectl delete -f hello-proj.yaml
 ```
-
 ```shell
 helm uninstall argocd -n argocd
 ```
-
-If you're using `kind`:
-
 ```shell
 kind delete cluster
 ```

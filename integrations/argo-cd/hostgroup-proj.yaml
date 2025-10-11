@@ -12,10 +12,6 @@ spec:
     chart: cosmonic-control-hostgroup
     repoURL: ghcr.io/cosmonic 
     targetRevision: 0.3.0
-    helm:
-      valuesObject: 
-        http:
-          enabled: true
   destination:
     name: "in-cluster"
     namespace: cosmonic-system

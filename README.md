@@ -10,7 +10,7 @@ In order to try these demos and examples, you will need a **Kubernetes cluster**
 
 ### Install local Kubernetes environment
 
-For the best local Kubernetes development experience, we recommend installing `kind` with the following `kind-config.yaml` configuration:
+For the best local Kubernetes development experience, we recommend installing [`kind`](https://kind.sigs.k8s.io/) with the following `kind-config.yaml` configuration:
 
 ```yaml
 kind: Cluster
@@ -74,6 +74,10 @@ This repository includes...
 
 - `http-ingress-nginx`: Demo for NGINX as an Ingress Controller for Wasm workloads
 - `integrations/argo-cd`: Demo for using GitOps patterns with Argo CD, Cosmonic Control, and Wasm components
+
+### Configuration
+
+- `kind-config.yaml`: Configuration file for local Kubernetes clusters with [`kind`](https://kind.sigs.k8s.io/)
 
 ### Miscellaneous
 

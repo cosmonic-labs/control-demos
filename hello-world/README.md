@@ -21,8 +21,11 @@ nodes:
     hostPort: 80
     protocol: TCP
 ```
+
 This will help enable simple local ingress with Envoy.
+
 Start the cluster:
+
 ```shell
 kind create cluster --config=kind-config.yaml
 ```

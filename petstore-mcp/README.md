@@ -1,6 +1,6 @@
 # Petstore MCP Server for Cosmonic Control
 
-This Wasm component is an example of an MCP server compiled to a secure-by-default Wasm sandbox, enabling MCP hosts to utilize the the [Swagger PetStore API](https://petstore3.swagger.io/api/v3/openapi.json). The example is written in TypeScript and packaged for deployment to Kubernetes clusters with [Cosmonic Control](https://cosmonic.com/docs/). 
+This Wasm component is an example of an MCP server compiled to a secure-by-default Wasm sandbox, enabling MCP hosts to utilize the [Swagger PetStore API](https://petstore3.swagger.io/api/v3/openapi.json). The example is written in TypeScript and packaged for deployment to Kubernetes clusters with [Cosmonic Control](https://cosmonic.com/docs/). 
 
 While this component was written for Cosmonic Control, you can run it with any WebAssembly runtime that supports the Component Model and the [WebAssembly System Interface (WASI)](https://wasi.dev/) HTTP API. The component is available as an OCI artifact at `ghcr.io/cosmonic-labs/petstore-mcp-server`.
 

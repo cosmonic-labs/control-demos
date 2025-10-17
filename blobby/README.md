@@ -129,6 +129,26 @@ This component uses the following interfaces:
 2. `wasi:blobstore` to save the image to a blob
 3. `wasi:logging` so the component can log
 
+## Web UI
+
+A static web interface is available in `index.html` for interacting with the blobby storage system through a user-friendly UI. The interface provides:
+
+- **File Upload**: Upload single or multiple files to the blob storage
+- **File Download**: Download stored files with a single click
+- **File Deletion**: Remove files from storage
+- **Configurable API URL**: Change the blobby API endpoint (defaults to `http://127.0.0.1:8000`)
+
+To use the web UI:
+
+1. Start the blobby service (using `wash dev` or deployed to Kubernetes)
+2. Open `index.html` in a web browser
+3. Configure the API URL if different from the default
+4. Start uploading, downloading, and managing files
+
+The UI is built with vanilla HTML, CSS, and JavaScript with no external dependencies. Files are tracked client-side using browser localStorage.
+
+## API Usage
+
 Once everything is up and running, you can run through all of the operations by following the
 annotated commands below:
 

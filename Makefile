@@ -1,15 +1,26 @@
-all:
-	@echo "Usage: make render-<demo-name>"
-	@echo "Example: make render-blobby"
+help:
+	@./.scripts/run.sh
 
-.PHONY: render-%
-render-%:
-	helm template -n example-ns -f  $*/values.http-trigger.yaml example-name charts/http-trigger
+.PHONY: helm-render-%
+helm-render-%:
+	@./.scripts/run.sh render $*
 
 .PHONY: helm-install-%
 helm-install-%:
-	helm install --create-namespace -n $* -f $*/values.http-trigger.yaml $* charts/http-trigger
+	@./.scripts/run.sh install $*
 
 .PHONY: helm-delete-%
 helm-delete-%:
-	helm delete -n $* --ignore-not-found --cascade foreground $*
+	@./.scripts/run.sh delete $*
+
+.PHONY: helm-render
+helm-render:
+	@./.scripts/run.sh render
+
+.PHONY: helm-install
+helm-install:
+	@./.scripts/run.sh install
+
+.PHONY: helm-delete
+helm-delete:
+	@./.scripts/run.sh delete

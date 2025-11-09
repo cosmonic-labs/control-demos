@@ -7,7 +7,7 @@ declare const self: ServiceWorkerGlobalScope;
 import type {Env, Hono, Schema} from 'hono';
 import type {BlankSchema} from 'hono/types';
 
-import {getAll as getConfig} from 'wasi:config/runtime@0.2.0-draft';
+import {getAll as getConfig} from 'wasi:config/store@0.2.0-rc.1';
 
 import {handleError} from './errorHandling';
 import {createLogger} from '../logging';

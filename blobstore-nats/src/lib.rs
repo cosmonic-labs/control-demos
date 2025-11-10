@@ -95,7 +95,7 @@ impl bindings::exports::wasi::http::incoming_handler::Guest for BlobstoreCompone
 
 /// Retrieves the container names from the runtime configuration
 fn get_container_names() -> Vec<String> {
-    match bindings::wasi::config::runtime::get("container_names") {
+    match bindings::wasi::config::store::get("container_names") {
         Ok(Some(names)) => names.split(',').map(String::from).collect(),
         _ => DEFAULT_CONTAINERS.iter().map(|&s| s.to_string()).collect(),
     }

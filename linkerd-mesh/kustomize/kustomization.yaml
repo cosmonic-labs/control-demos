@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: cosmonic-system
+
+# Pull cosmonic-control chart and render templates
+helmCharts:
+  - name: cosmonic-control
+    repo: oci://ghcr.io/cosmonic/cosmonic-control
+    version: 0.3.0
+    releaseName: cosmonic-control
+    namespace: cosmonic-system
+    valuesInline:
+      envoy:
+        service:
+          type: NodePort
+          httpNodePort: 30950
+      cosmonicLicenseKey: "<insert license here>"
+  - name: hostgroup
+    repo: oci://ghcr.io/cosmonic/cosmonic-control-hostgroup
+    version: 0.3.0
+    releaseName: hostgroup
+    namespace: cosmonic-system
+
+# Apply strategic merge patches to add Linkerd injection annotation
+patchesStrategicMerge:
+  - linkerd-inject-patch.yaml

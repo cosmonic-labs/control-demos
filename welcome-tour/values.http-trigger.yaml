@@ -5,7 +5,7 @@ components:
     localResources:
       environment:
         config:
-          consolehost: "localhost"
+          consolehost: "http://localhost"
           consoleport: "8080"
 
 ingress:

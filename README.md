@@ -83,12 +83,12 @@ This repository includes...
 
 This repository includes a Makefile enabling simplified usage of Helm commands from a local download of this repository using `make`:
 
-* `make helm-render-<demo name>`: Render chart templates locally and display the output for a given demo (Ex. `make helm-render-blobby`)
-* `make helm-install-<demo name>`: Deploy a given demo in a dedicated namespace with an HTTPTrigger. (Ex. `make helm-install-blobby`)
-* `make helm-delete-<demo name>`: Delete a given demo installed with `make helm-install`. (Ex. `make helm-delete-blobby`)
+- `make helm-render-<demo name>`: Render chart templates locally and display the output for a given demo (Ex. `make helm-render-blobby`)
+- `make helm-install-<demo name>`: Deploy a given demo in a dedicated namespace with an HTTPTrigger. (Ex. `make helm-install-blobby`)
+- `make helm-delete-<demo name>`: Delete a given demo installed with `make helm-install`. (Ex. `make helm-delete-blobby`)
 
 ## Further Reading
 
 For more information on Cosmonic Control, visit [cosmonic.com](https://cosmonic.com/) and the [Cosmonic Control documentation](https://cosmonic.com/docs/).
 
-For more on building components, see the [Developer Guide](https://cosmonic.com/docs/developer-guide/developing-webassembly-components) in the Cosmonic Control documentation. 
+For more on building components, see the [Developer Guide](https://cosmonic.com/docs/developer-guide/developing-webassembly-components) in the Cosmonic Control documentation.

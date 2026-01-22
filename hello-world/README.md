@@ -85,7 +85,7 @@ There is also a GitHub Workflow `hello-world.yml` in the `.github/workflows` dir
 Before starting, ensure that you have the following installed:
 
 - [`cargo`](https://www.rust-lang.org/tools/install) 1.82+ for the Rust toolchain
-- [Wasm Shell (`wash`)](https://github.com/wasmCloud/wash) for component development
+- [Wasm Shell (`wash`)](https://github.com/wasmCloud/wash) rc.6 for component development
 
 ### Developing with `wash`
 

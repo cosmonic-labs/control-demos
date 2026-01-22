@@ -191,7 +191,7 @@ Before starting, ensure that you have the following installed in addition to the
 
 - [`tinygo`](https://tinygo.org/getting-started/install/) for compiling Go (always use the latest version)
 - [`wasm-tools`](https://github.com/bytecodealliance/wasm-tools#installation) for Go bindings
-- [`wash`](https://github.com/wasmCloud/wash) for building the component
+- [`wash`](https://github.com/wasmCloud/wash) rc.6 for building the component
 
 ### Developing with `wash`
 

@@ -1,0 +1,3 @@
+build:
+  command: go generate ./... && tinygo build -target wasip2 -wit-package ./wit -wit-world example -o build/output.wasm ./
+  component_path: build/output.wasm

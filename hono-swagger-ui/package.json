@@ -7,7 +7,7 @@
     "postinstall": "npm run generate:types -o types",
     "generate:types": "rimraf generated/types && jco guest-types wit/ -o generated/types",
     "build:ts": "rollup -c",
-    "build:js": "jco componentize -w wit -o dist/cosmonic_control_welcome_tour.wasm dist/index.bundled.js",
+    "build:js": "jco componentize -w wit -o dist/hono_swagger_ui.wasm dist/index.bundled.js",
     "build": "npm run generate:types && npm run build:ts && npm run build:js",
     "install-and-build": "npm install && npm run build",
     "start": "npm run dev",

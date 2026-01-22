@@ -78,17 +78,7 @@ Before starting, ensure that you have the following installed:
 
 - [`cargo`](https://www.rust-lang.org/tools/install) 1.82+ for the Rust toolchain
 - `wasm32-wasip2` target for Rust: Install with `rustup target add wasm32-wasip2`
-- [Wasm Shell (`wash`)](https://github.com/wasmCloud/wash) for component development
-
-### Install the blobstore-filesystem plugin
-
-The `blobstore-filesystem` plugin for `wash` enables you to run a component that uses the wasi:blobstore interface against a local filesystem when running `wash dev`.
-
-Install the plugin:
-
-```shell
-wash plugin install ghcr.io/wasmcloud/wash-plugins/blobstore-filesystem:0.1.0
-```
+- [Wasm Shell (`wash`)](https://github.com/wasmCloud/wash) rc.6 for component development
 
 ## Developing with `wash`
 

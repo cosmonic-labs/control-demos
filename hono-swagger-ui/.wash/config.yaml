@@ -1,0 +1,3 @@
+build:
+  command: npm run install-and-build
+  component_path: dist/hono_swagger_ui.wasm

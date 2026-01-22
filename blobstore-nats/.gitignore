@@ -1,6 +1,5 @@
 # Wasm artifacts
 *.wasm
-.wash/
 
 # Rust build artifacts
 target/
@@ -10,5 +9,3 @@ target/
 
 # Junk
 .DS_Store
-
-wkg.lock

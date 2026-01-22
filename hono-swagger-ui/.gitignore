@@ -11,5 +11,4 @@ node_modules
 dist
 build
 generated/**
-.wash
 *.tgz

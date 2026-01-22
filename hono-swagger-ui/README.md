@@ -84,7 +84,7 @@ Before starting, ensure that you have the following installed:
 
 - [`node` - NodeJS runtime](https://nodejs.org) (see `.nvmrc` for version)
 - [`npm` - Node Package Manager (NPM)](https://github.com/npm/cli) manages packages for the NodeJS ecosystem
-- [`wash` - Wasm Shell](https://github.com/wasmCloud/wash) for developing and building components
+- [`wash` - Wasm Shell](https://github.com/wasmCloud/wash) rc.6 for developing and building components
 
 ### Developing with `wash`
 

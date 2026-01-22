@@ -1,7 +1,5 @@
 # Rust build artifacts
 target/
 
-.wash
-
 # Trash
 .DS_Store

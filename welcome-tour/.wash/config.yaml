@@ -1,3 +1,6 @@
+new:
+  command: npm install
+
 build:
-  command: npm run install-and-build
+  command: npm run build
   component_path: dist/cosmonic_control_welcome_tour.wasm

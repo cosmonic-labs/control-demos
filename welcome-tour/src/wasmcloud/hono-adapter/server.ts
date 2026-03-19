@@ -7,8 +7,6 @@ declare const self: ServiceWorkerGlobalScope;
 import type {Env, Hono, Schema} from 'hono';
 import type {BlankSchema} from 'hono/types';
 
-import {getAll as getConfig} from 'wasi:config/store@0.2.0-rc.1';
-
 import {handleError} from './errorHandling';
 import {createLogger} from '../logging';
 
@@ -20,8 +18,7 @@ function serve<E extends Env = Env, S extends Schema = BlankSchema, BasePath ext
   self.addEventListener('fetch', (event): void => {
     logger.debug('Request:', event.request.url);
 
-    const env = Object.fromEntries(getConfig());
-    event.respondWith(app.fetch(event.request, env));
+    event.respondWith(app.fetch(event.request, {}));
   });
 }
 

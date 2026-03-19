@@ -2,46 +2,28 @@
 
 This Wasm component introduces users to the core features of Cosmonic Control. It is built on [Hono](https://hono.dev) and based on the [HTTP Server with Hono wasmCloud example](https://github.com/wasmCloud/typescript/tree/main/examples/components/http-server-with-hono).
 
-The component serves a simple web app that embeds assets like fonts and images directly in the HTML.
-
-It also uses `wasi:config/runtime` to pass config from the environment to the Hono app for values such as the Console UI address.
+The component serves a web app that embeds all assets (fonts, images, SVGs) directly in the binary — no runtime file loading required. It guides users through deploying another component (Blobby), viewing metrics in Perses, and exploring further resources.
 
 ### Install local Kubernetes environment
 
-For the best local Kubernetes development experience, we recommend installing [`kind`](https://kind.sigs.k8s.io/) and starting a cluster with the following `kind-config.yaml` configuration, enabling simple local ingress with Envoy:
-
-```yaml
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-# One control plane node and three "workers."
-nodes:
-- role: control-plane
-  extraPortMappings:
-  - containerPort: 30950
-    hostPort: 80
-    protocol: TCP
-```
-
-The following command downloads the `kind-config.yaml` from this repository, starts a cluster, and deletes the config upon completion:
+For the best local Kubernetes development experience, we recommend installing [`k3d`](https://k3d.io/) and starting a cluster with the following command:
 
 ```shell
-curl -fLO https://raw.githubusercontent.com/cosmonic-labs/control-demos/refs/heads/main/kind-config.yaml && kind create cluster --config=kind-config.yaml && rm kind-config.yaml
+k3d cluster create cosmonic --port "80:80@loadbalancer" --k3s-arg "--disable=traefik@server:0"
 ```
 
-## Install Cosmonic Control
+For instructions on deploying to other local or cloud Kubernetes environments, see the [Cosmonic Control documentation](https://docs.cosmonic.com/install-cosmonic-control).
 
-You'll need a **trial license key** to follow these instructions. Sign up for Cosmonic Control's [free trial](https://cosmonic.com/trial) to get a key.
+## Install Cosmonic Control
 
 Deploy Cosmonic Control to Kubernetes with Helm:
 
 ```shell
-helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control\
-  --version 0.3.0\
-  --namespace cosmonic-system\
-  --create-namespace\
-  --set envoy.service.type=NodePort\
-  --set envoy.service.httpNodePort=30950\
-  --set cosmonicLicenseKey="<insert license here>"
+helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
+  --version 0.3.0 \
+  --namespace cosmonic-system \
+  --create-namespace \
+  --set envoy.service.type=LoadBalancer
 ```
 
 Deploy a HostGroup:
@@ -55,7 +37,7 @@ helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup --versi
 Deploy this component to a Kubernetes cluster with Cosmonic Control using the shared HTTP trigger chart:
 
 ```shell
-helm install welcome-tour ../../charts/http-trigger -f values.http-trigger.yaml
+helm install welcome-tour ../charts/http-trigger -f values.http-trigger.yaml
 ```
 
 You can also deploy the chart as an OCI artifact with a remote values file:
@@ -87,7 +69,10 @@ kubectl delete ns cosmonic-system
 
 In addition to the standard elements of a TypeScript project, the directory includes the following files and directories:
 
-- `values.yaml`: Helm values for the shared HTTP sample chart
+- `values.http-trigger.yaml`: Helm values for the shared HTTP trigger chart
+- `nodemon.json`: Configures `nodemon` to watch `src/` and re-run `wash dev` on changes
+- `logo-wasmCloud.svg`: wasmCloud wordmark embedded as a base64 data URI in the footer
+- `cosmonic-control.png`: Cosmonic Control logo embedded as a base64 data URI in the header
 - `wit/`: Directory for WebAssembly Interface Type (WIT) packages that define interfaces
 
 ## Building Locally
@@ -96,11 +81,11 @@ Before starting, ensure that you have the following installed:
 
 - [`node` - NodeJS runtime](https://nodejs.org) (see `.nvmrc` for version)
 - [`npm` - Node Package Manager (NPM)](https://github.com/npm/cli) manages packages for the NodeJS ecosystem
-- [`wash` - Wasm Shell](https://github.com/wasmCloud/wash) rc.6 for developing and building components
+- [`wash` - wasmCloud Shell](https://github.com/wasmCloud/wash) for developing and building components
 
 ### Developing with `wash`
 
-Clone the [cosmonic-labs/control-demos repository](https://github.com/cosmonic-labs/control-demos): 
+Clone the [cosmonic-labs/control-demos repository](https://github.com/cosmonic-labs/control-demos):
 
 ```shell
 git clone https://github.com/cosmonic-labs/control-demos.git
@@ -112,16 +97,16 @@ Change directory to `welcome-tour`:
 cd welcome-tour
 ```
 
-Start a development loop:
+Install dependencies and start a development loop with file watching:
 
 ```shell
-wash dev --runtime-config consoleurl=http://127.0.0.1:8000
+npm install && npm run dev
 ```
 
-or
+Or start `wash dev` directly without file watching:
 
 ```shell
-npm run start
+wash dev
 ```
 
 Navigate to [127.0.0.1:8000](http://127.0.0.1:8000).

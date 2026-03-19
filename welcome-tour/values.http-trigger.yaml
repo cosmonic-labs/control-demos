@@ -1,7 +1,7 @@
 # For the 'http-trigger' helm chart
 components:
   - name: welcome-tour
-    image: ghcr.io/cosmonic-labs/components/welcome-tour:0.1.0
+    image: ghcr.io/cosmonic-labs/components/welcome-tour:0.2.0
     localResources:
       environment:
         config:
@@ -17,8 +17,3 @@ hostInterfaces:
     version: 0.1.0-draft
     interfaces:
       - logging
-  - namespace: wasi
-    package: config
-    version: 0.2.0-rc.1
-    interfaces:
-      - store

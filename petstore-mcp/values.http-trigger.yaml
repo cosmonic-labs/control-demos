@@ -1,7 +1,7 @@
 # For the 'http-trigger' helm chart
 components:
   - name: petstore-mcp
-    image: ghcr.io/cosmonic-labs/petstore-mcp-server:v0.2.0
+    image: ghcr.io/cosmonic-labs/petstore-mcp-server:v0.3.0
 
 ingress:
   host: "petstore-mcp.localhost.cosmonic.sh"

@@ -1,0 +1,47 @@
+---
+# Patch Envoy deployment to add Linkerd injection annotation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy
+  namespace: cosmonic-system
+spec:
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+---
+# Patch wasmCloud host Deployment to add Linkerd injection annotation
+# Note: Use opaque ports for NATS to allow direct TCP communication without HTTP parsing
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostgroup
+  namespace: cosmonic-system
+spec:
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+        # Mark NATS ports as opaque (non-HTTP) for better performance
+        # Opaque ports bypass HTTP protocol detection and are treated as raw TCP
+        # This is the recommended approach for non-HTTP protocols like NATS
+        config.linkerd.io/opaque-ports: "4222,6222,7422,8222"
+
+        # Port breakdown:
+        # - 4222: NATS client connections
+        # - 6222: NATS cluster routes (server-to-server)
+        # - 7422: NATS leafnode connections
+        # - 8222: NATS HTTP monitoring (can be opaque since we don't need L7 metrics)
+
+        # Optional: Set proxy resource limits for production
+        # config.linkerd.io/proxy-cpu-limit: "1"
+        # config.linkerd.io/proxy-memory-limit: "512Mi"
+        # config.linkerd.io/proxy-cpu-request: "100m"
+        # config.linkerd.io/proxy-memory-request: "128Mi"
+
+        # Optional: Skip inbound ports if needed
+        # config.linkerd.io/skip-inbound-ports: "9090"
+
+        # Optional: Enable debug logging for the proxy
+        # config.linkerd.io/proxy-log-level: "info,linkerd=debug"

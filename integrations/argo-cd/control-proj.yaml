@@ -11,14 +11,12 @@ spec:
   source:
     chart: cosmonic-control
     repoURL: ghcr.io/cosmonic
-    targetRevision: 0.3.0
+    targetRevision: 0.4.1
     helm:
-      valuesObject: 
-        cosmonicLicenseKey: "<insert license here>"
-        envoy:
-          service:
-            type: NodePort
-            httpNodePort: 30950
+      valuesObject:
+        ingress:
+          hosts:
+            - host: hello.localhost.cosmonic.sh
   destination:
     name: "in-cluster"
     namespace: cosmonic-system

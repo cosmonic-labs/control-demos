@@ -1,9 +1,13 @@
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-# One control plane node and three "workers."
+# Forward host ports 80 and 443 to Traefik's NodePorts (30080 / 30443).
+# The Cosmonic Control chart deploys Traefik as the edge proxy by default.
 nodes:
-- role: control-plane
-  extraPortMappings:
-  - containerPort: 30950
-    hostPort: 80
-    protocol: TCP
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 30443
+        hostPort: 443
+        protocol: TCP

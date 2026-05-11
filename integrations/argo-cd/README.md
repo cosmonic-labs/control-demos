@@ -7,31 +7,33 @@ This repository includes an Argo CD Application CRD manifest that can be used to
 * [`kubectl`](https://kubernetes.io/releases/download/)
 * [Helm](https://helm.sh/docs) v3.8.0+
 * [GitHub account](https://github.com/signup)
-* [Free trial key](https://cosmonic.com/trial) for Cosmonic Control
 
 ## Install local Kubernetes environment
 
-Install `kind` with the following `kind-config.yaml` configuration:
+Install `kind` with the following `kind-config.yaml`, forwarding host ports 80 and 443 to Traefik's NodePorts (the Cosmonic Control chart deploys Traefik as the edge proxy by default):
 
 ```yaml
+# kind-config.yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-# One control plane node and three "workers."
 nodes:
-- role: control-plane
-  extraPortMappings:
-  - containerPort: 30950
-    hostPort: 80
-    protocol: TCP
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 30443
+        hostPort: 443
+        protocol: TCP
 ```
-
-This will help enable simple local ingress with Envoy.
 
 Start the cluster:
 
 ```shell
 kind create cluster --config=kind-config.yaml
 ```
+
+For other local Kubernetes environments (k3d, k3s) and cloud clusters, see the [Cosmonic Control documentation](https://docs.cosmonic.com/install-cosmonic-control).
 
 ## Fork the repository
 
@@ -58,7 +60,7 @@ Install Argo CD using the [community-maintained Helm chart](https://argoproj.git
 helm install argocd oci://ghcr.io/argoproj/argo-helm/argo-cd --set-string configs.params."server\.disable\.auth"=true --version 8.1.3 --create-namespace -n argocd
 ```
 
-Port-forward the Argo CD server in order to access the dashboard. (Note: We're using our local port 3000 for the Argo CD dashboard in order to leave 8080 for the Cosmonic Control Console UI.)
+Port-forward the Argo CD server in order to access the dashboard:
 
 ```shell
 kubectl port-forward service/argocd-server -n argocd 3000:443
@@ -87,11 +89,7 @@ The Applications will appear on the Argo CD dashboard. It will take a moment for
 
 ![Argo CD dashboard with two healthy, synced Applications](./img/healthy-apps.webp)
 
-Once the Applications are synced and healthy, you can port-forward to access the Cosmonic Control Console UI at [localhost:8080](http://localhost:8080):
-
-```shell
-kubectl -n cosmonic-system port-forward svc/console 8080:8080
-```
+Once the Applications are synced and healthy, the Perses observability dashboard is reachable at <http://perses.localhost.cosmonic.sh> (the Cosmonic Control chart auto-creates an Ingress for it).
 
 ## Trigger a Wasm component sync with a GitHub release
 

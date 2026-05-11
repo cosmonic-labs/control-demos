@@ -10,47 +10,51 @@ In order to try these demos and examples, you will need a **Kubernetes cluster**
 
 ### Install local Kubernetes environment
 
-For the best local Kubernetes development experience, we recommend installing [`kind`](https://kind.sigs.k8s.io/) and starting a cluster with the following `kind-config.yaml` configuration, enabling simple local ingress with Envoy:
+For local Kubernetes development, we recommend [`kind`](https://kind.sigs.k8s.io/) with host ports 80 and 443 forwarded to Traefik's NodePorts (the Cosmonic Control chart deploys Traefik as the edge proxy by default):
 
 ```yaml
+# kind-config.yaml
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
-# One control plane node and three "workers."
 nodes:
-- role: control-plane
-  extraPortMappings:
-  - containerPort: 30950
-    hostPort: 80
-    protocol: TCP
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 30443
+        hostPort: 443
+        protocol: TCP
 ```
 
-The following command downloads the `kind-config.yaml` from this repository, starts a cluster, and deletes the config upon completion:
+The following command downloads the `kind-config.yaml` from this repository and creates a cluster from it:
 
 ```shell
 curl -fLO https://raw.githubusercontent.com/cosmonic-labs/control-demos/refs/heads/main/kind-config.yaml && kind create cluster --config=kind-config.yaml && rm kind-config.yaml
 ```
 
+For other local Kubernetes environments (k3d, k3s) and cloud clusters, see the [Cosmonic Control documentation](https://docs.cosmonic.com/install-cosmonic-control).
+
 ### Install Cosmonic Control
 
-You'll need a **trial license key** to follow these instructions. Sign up for Cosmonic Control's [free trial](https://cosmonic.com/trial) to get a key.
-
-Deploy Cosmonic Control to Kubernetes with Helm:
+Cosmonic Control is free to get started. Deploy with Helm:
 
 ```shell
-helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control\
-  --version 0.3.0\
-  --namespace cosmonic-system\
-  --create-namespace\
-  --set envoy.service.type=NodePort\
-  --set envoy.service.httpNodePort=30950\
-  --set cosmonicLicenseKey="<insert license here>"
+helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
+  --version 0.4.1 \
+  --namespace cosmonic-system \
+  --create-namespace
 ```
 
 Deploy a HostGroup:
 
 ```shell
-helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup --version 0.3.0 --namespace cosmonic-system
+helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
+  --version 0.4.1 \
+  --namespace cosmonic-system
 ```
+
+When installing a demo below, pass the demo's host to the cosmonic-control install via `--set 'ingress.hosts[N].host=<demo>.localhost.cosmonic.sh'` so Traefik routes external traffic for that host to Envoy. `*.localhost.cosmonic.sh` resolves to `127.0.0.1`, so no `/etc/hosts` edits are required.
 
 ## Contents
 
@@ -74,10 +78,6 @@ This repository includes...
 ### Configuration
 
 - `kind-config.yaml`: Configuration file for local Kubernetes clusters with [`kind`](https://kind.sigs.k8s.io/)
-
-### Miscellaneous
-
-- `trial`: YAML documents used to configure trial deployments of Cosmonic Control
 
 ## Makefile
 

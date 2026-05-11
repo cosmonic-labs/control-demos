@@ -6,30 +6,49 @@ The component serves a web app that embeds all assets (fonts, images, SVGs) dire
 
 ### Install local Kubernetes environment
 
-For the best local Kubernetes development experience, we recommend installing [`k3d`](https://k3d.io/) and starting a cluster with the following command:
+For local Kubernetes development, we recommend [`kind`](https://kind.sigs.k8s.io/) with host ports 80 and 443 forwarded to Traefik's NodePorts (the Cosmonic Control chart deploys Traefik as the edge proxy by default):
 
-```shell
-k3d cluster create cosmonic --port "80:80@loadbalancer" --k3s-arg "--disable=traefik@server:0"
+```yaml
+# kind-config.yaml
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      - containerPort: 30080
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 30443
+        hostPort: 443
+        protocol: TCP
 ```
 
-For instructions on deploying to other local or cloud Kubernetes environments, see the [Cosmonic Control documentation](https://docs.cosmonic.com/install-cosmonic-control).
+The following command downloads the `kind-config.yaml` from this repository and creates a cluster from it:
+
+```shell
+curl -fLO https://raw.githubusercontent.com/cosmonic-labs/control-demos/refs/heads/main/kind-config.yaml && kind create cluster --config=kind-config.yaml && rm kind-config.yaml
+```
+
+For other local Kubernetes environments (k3d, k3s) and cloud clusters, see the [Cosmonic Control documentation](https://docs.cosmonic.com/install-cosmonic-control).
 
 ## Install Cosmonic Control
 
-Deploy Cosmonic Control to Kubernetes with Helm:
+Cosmonic Control is free to get started. Deploy it to Kubernetes with Helm, pre-creating a Traefik Ingress for the welcome-tour host:
 
 ```shell
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
-  --version 0.3.0 \
+  --version 0.4.1 \
   --namespace cosmonic-system \
   --create-namespace \
-  --set envoy.service.type=LoadBalancer
+  --set 'ingress.hosts[0].host=welcome-tour.localhost.cosmonic.sh'
 ```
 
 Deploy a HostGroup:
 
 ```shell
-helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup --version 0.3.0 --namespace cosmonic-system
+helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
+  --version 0.4.1 \
+  --namespace cosmonic-system
 ```
 
 ## Deploy with Cosmonic Control

@@ -10,8 +10,8 @@ spec:
   project: default
   source:
     chart: cosmonic-control-hostgroup
-    repoURL: ghcr.io/cosmonic 
-    targetRevision: 0.3.0
+    repoURL: ghcr.io/cosmonic
+    targetRevision: 0.4.1
   destination:
     name: "in-cluster"
     namespace: cosmonic-system

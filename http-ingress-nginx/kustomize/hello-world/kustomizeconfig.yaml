@@ -1,5 +1,0 @@
-images:
-  - path: spec/image
-    kind: Provider
-  - path: spec/image
-    kind: Component

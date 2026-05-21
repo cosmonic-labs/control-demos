@@ -39,7 +39,7 @@ Cosmonic Control is free to get started. Deploy it to Kubernetes with Helm, pre-
 
 ```shell
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system \
   --create-namespace \
   --set 'ingress.hosts[0].host=hello-world.localhost.cosmonic.sh'
@@ -49,7 +49,7 @@ Deploy a HostGroup:
 
 ```shell
 helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system
 ```
 
@@ -88,7 +88,7 @@ There is also a GitHub Workflow `hello-world.yml` in the `.github/workflows` dir
 Before starting, ensure that you have the following installed:
 
 - [`cargo`](https://www.rust-lang.org/tools/install) 1.82+ for the Rust toolchain
-- [Wasm Shell (`wash`)](https://github.com/wasmCloud/wash) rc.6 for component development
+- [Wasm Shell (`wash`)](https://github.com/wasmCloud/wash) 2.2.0 for component development
 
 ### Developing with `wash`
 

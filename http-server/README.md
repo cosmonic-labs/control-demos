@@ -37,7 +37,7 @@ Cosmonic Control is free to get started. Deploy it to Kubernetes with Helm, pre-
 
 ```shell
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system \
   --create-namespace \
   --set 'ingress.hosts[0].host=http-server.localhost.cosmonic.sh'
@@ -47,7 +47,7 @@ Deploy a HostGroup:
 
 ```shell
 helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system
 ```
 
@@ -194,7 +194,7 @@ Before starting, ensure that you have the following installed in addition to the
 
 - [`tinygo`](https://tinygo.org/getting-started/install/) for compiling Go (always use the latest version)
 - [`wasm-tools`](https://github.com/bytecodealliance/wasm-tools#installation) for Go bindings
-- [`wash`](https://github.com/wasmCloud/wash) rc.6 for building the component
+- [`wash`](https://github.com/wasmCloud/wash) 2.2.0 for building the component
 
 ### Developing with `wash`
 

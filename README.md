@@ -41,7 +41,7 @@ Cosmonic Control is free to get started. Deploy with Helm:
 
 ```shell
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system \
   --create-namespace
 ```
@@ -50,7 +50,7 @@ Deploy a HostGroup:
 
 ```shell
 helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system
 ```
 
@@ -72,7 +72,6 @@ This repository includes...
 
 ### Demos
 
-- `http-ingress-nginx`: Demo for NGINX as an Ingress Controller for Wasm workloads
 - `integrations/argo-cd`: Demo for using GitOps patterns with Argo CD, Cosmonic Control, and Wasm components
 
 ### Configuration

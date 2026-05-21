@@ -41,7 +41,7 @@ Cosmonic Control is free to get started. Deploy it to Kubernetes with Helm, pre-
 
 ```shell
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system \
   --create-namespace \
   --set 'ingress.hosts[0].host=blobby.localhost.cosmonic.sh'
@@ -51,7 +51,7 @@ Deploy a HostGroup:
 
 ```shell
 helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system
 ```
 
@@ -71,13 +71,13 @@ helm install blobby --version 0.1.2 oci://ghcr.io/cosmonic-labs/charts/http-trig
 
 ## Development
 
-Find the [source for this component in the wasmCloud repository](https://github.com/wasmCloud/wasmCloud/tree/main/examples/rust/components/blobby).
+Find the [source for this component in the wasmCloud repository](https://github.com/wasmCloud/wasmCloud/tree/main/examples/blobby).
 
 Before starting, ensure that you have the following installed:
 
 - [`cargo`](https://www.rust-lang.org/tools/install) 1.82+ for the Rust toolchain
 - `wasm32-wasip2` target for Rust: Install with `rustup target add wasm32-wasip2`
-- [Wasm Shell (`wash`)](https://github.com/wasmCloud/wash) rc.6 for component development
+- [Wasm Shell (`wash`)](https://github.com/wasmCloud/wash) 2.2.0 for component development
 
 ### Developing with `wash`
 
@@ -90,7 +90,7 @@ git clone https://github.com/wasmCloud/wasmcloud.git
 Change directory to `blobby`:
 
 ```shell
-cd wasmcloud/examples/rust/components/blobby
+cd wasmcloud/examples/blobby
 ```
 
 Start a development loop:

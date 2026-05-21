@@ -35,7 +35,7 @@ Cosmonic Control is free to get started. Deploy it to Kubernetes with Helm, pre-
 
 ```shell
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system \
   --create-namespace \
   --set 'ingress.hosts[0].host=hono-swagger-ui.localhost.cosmonic.sh'
@@ -45,7 +45,7 @@ Deploy a HostGroup:
 
 ```shell
 helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
-  --version 0.4.1 \
+  --version 0.4.3 \
   --namespace cosmonic-system
 ```
 
@@ -87,7 +87,7 @@ Before starting, ensure that you have the following installed:
 
 - [`node` - NodeJS runtime](https://nodejs.org) (see `.nvmrc` for version)
 - [`npm` - Node Package Manager (NPM)](https://github.com/npm/cli) manages packages for the NodeJS ecosystem
-- [`wash` - Wasm Shell](https://github.com/wasmCloud/wash) rc.6 for developing and building components
+- [`wash` - Wasm Shell](https://github.com/wasmCloud/wash) 2.2.0 for developing and building components
 
 ### Developing with `wash`
 

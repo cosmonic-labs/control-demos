@@ -1,7 +1,7 @@
 # For the 'http-trigger' helm chart
 components:
   - name: blobby
-    image: ghcr.io/wasmcloud/components/blobby-rust:0.5.1
+    image: ghcr.io/wasmcloud/components/blobby:0.6.0
 
 ingress:
   host: "blobby.localhost.cosmonic.sh"

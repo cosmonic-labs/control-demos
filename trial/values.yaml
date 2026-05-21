@@ -1,5 +1,0 @@
-image:
-  repository: quay.io/cosmonic/infrastructure-operator
-  tag: 0.1.7
-imagePullSecrets:
-  - name: cosmonic-quay

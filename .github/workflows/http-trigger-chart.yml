@@ -1,5 +1,5 @@
 ---
-name: Package and publish HTTP sample Helm chart
+name: Package and publish HTTP trigger Helm chart
 
 on:
   workflow_run:
@@ -83,26 +83,26 @@ jobs:
         working-directory: ./
         run: |
           # Backup original Chart.yaml
-          cp charts/http-sample/Chart.yaml charts/http-sample/Chart.yaml.bak
-          
+          cp charts/http-trigger/Chart.yaml charts/http-trigger/Chart.yaml.bak
+
           # Update versions
-          sed -i "s/version: .*/version: ${{ steps.release.outputs.version }}/" charts/http-sample/Chart.yaml
-          sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" charts/http-sample/Chart.yaml
-          
+          sed -i "s/version: .*/version: ${{ steps.release.outputs.version }}/" charts/http-trigger/Chart.yaml
+          sed -i "s/appVersion: .*/appVersion: \"${{ steps.release.outputs.version }}\"/" charts/http-trigger/Chart.yaml
+
           echo "📝 Updated Chart.yaml:"
-          diff charts/http-sample/Chart.yaml.bak charts/http-sample/Chart.yaml || true
-          rm charts/http-sample/Chart.yaml.bak
+          diff charts/http-trigger/Chart.yaml.bak charts/http-trigger/Chart.yaml || true
+          rm charts/http-trigger/Chart.yaml.bak
 
       - name: Lint Helm chart template
         run: |
-          helm lint charts/http-sample/
+          helm lint charts/http-trigger/
           echo "✅ Helm chart validation passed"
 
       - name: Package Helm chart
         working-directory: ./
         run: |
-          helm package charts/http-sample --version ${{ steps.release.outputs.version }}
-          CHART_FILE="http-sample-${{ steps.release.outputs.version }}.tgz"
+          helm package charts/http-trigger --version ${{ steps.release.outputs.version }}
+          CHART_FILE="http-trigger-${{ steps.release.outputs.version }}.tgz"
           
           if [ ! -f "$CHART_FILE" ]; then
               echo "❌ Chart package not created: $CHART_FILE"
@@ -116,8 +116,8 @@ jobs:
           CHART_REF="oci://${{ env.REGISTRY }}/${{ env.REPO_OWNER_LC }}/charts/"
           echo "📤 Pushing charts to: $CHART_REF"
           
-          helm push http-sample-${{ steps.release.outputs.version }}.tgz $CHART_REF
-          echo "✅ Chart http-server-${{ steps.release.outputs.version }} published successfully"
+          helm push http-trigger-${{ steps.release.outputs.version }}.tgz $CHART_REF
+          echo "✅ Chart http-trigger-${{ steps.release.outputs.version }} published successfully"
 
       - name: Update component image tags in values files
         run: |
@@ -163,7 +163,7 @@ jobs:
             - Updated http-server image tag
             - Updated hono-swagger-ui image tag
             - Updated welcome-tour image tag
-            - Updated http-sample chart version to ${{ steps.release.outputs.version }}
+            - Updated http-trigger chart version to ${{ steps.release.outputs.version }}
           title: "🚀 Update HTTP sample image tags to ${{ steps.release.outputs.version }}"
           body: |
             ## 📦 Automated Release Update
@@ -179,12 +179,12 @@ jobs:
 
             ### Published Artifacts
             - 🎯 **Components**: `ghcr.io/${{ env.REPO_OWNER_LC }}/control-demos/*:${{ steps.release.outputs.version }}`
-            - ⚙️ **Chart**: `oci://ghcr.io/${{ env.REPO_OWNER_LC }}/charts/http-sample:${{ steps.release.outputs.version }}`
+            - ⚙️ **Chart**: `oci://ghcr.io/${{ env.REPO_OWNER_LC }}/charts/http-trigger:${{ steps.release.outputs.version }}`
 
             ### Usage
             ```bash
             # Deploy using the new chart version
-            helm install my-app oci://ghcr.io/${{ env.REPO_OWNER_LC }}/charts/http-sample \
+            helm install my-app oci://ghcr.io/${{ env.REPO_OWNER_LC }}/charts/http-trigger \
               --version ${{ steps.release.outputs.version }} \
               -f ./http-server/values.yaml
             ```
@@ -209,7 +209,7 @@ jobs:
           
           if [ "${{ job.status }}" == "success" ]; then
             echo "✅ **Status:** Chart published successfully" >> $GITHUB_STEP_SUMMARY
-            echo "📦 **Chart:** \`oci://ghcr.io/${{ env.REPO_OWNER_LC }}/charts/http-sample:${{ steps.release.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "📦 **Chart:** \`oci://ghcr.io/${{ env.REPO_OWNER_LC }}/charts/http-trigger:${{ steps.release.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Status:** Chart publication failed" >> $GITHUB_STEP_SUMMARY
           fi

@@ -3,10 +3,10 @@ name: http-trigger
 description: Reusable HTTP Sample Chart for Cosmonic Control
 
 type: application
-version: 0.1.2
-appVersion: "0.1.2"
+version: 0.1.3
+appVersion: "0.1.3"
 
-kubeVersion: ">= 1.29.0-0"
+kubeVersion: ">= 1.24.0-0"
 
 icon: https://avatars.githubusercontent.com/u/80437882
 sources:

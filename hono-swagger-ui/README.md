@@ -2,6 +2,15 @@
 
 This Wasm component is a tool for documenting and testing RESTful APIs, built on the [Hono HTTP framework](https://hono.dev/docs/) and the [Swagger UI](https://swagger.io/docs/open-source-tools/swagger-ui/usage/installation/) middleware. The component provides an interactive documentation interface based on a given OpenAPI specification. 
 
+## Routes
+
+| Path      | Serves                                                        |
+| --------- | ------------------------------------------------------------- |
+| `/`       | Redirects to `/ui` (so the default URL lands on the docs).    |
+| `/ui`     | The interactive Swagger UI.                                   |
+| `/doc`    | The OpenAPI document (JSON) that the UI renders.              |
+| `/health` | A plain `OK` health check.                                    |
+
 ### Install local Kubernetes environment
 
 For local Kubernetes development, we recommend [`kind`](https://kind.sigs.k8s.io/) with host ports 80 and 443 forwarded to Traefik's NodePorts (the Cosmonic Control chart deploys Traefik as the edge proxy by default):

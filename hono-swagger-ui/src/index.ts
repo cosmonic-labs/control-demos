@@ -34,6 +34,10 @@ const openApiDoc = {
 // Middleware for logging
 app.use(wasiLog());
 
+// Land the root on the Swagger UI, so the default URL
+// (http://hono-swagger-ui.localhost:8200/) opens the docs instead of a 404 (#167).
+app.get("/", (c: Context) => c.redirect("/ui"));
+
 // Serve the OpenAPI document
 app.get("/doc", (c: Context) => c.json(openApiDoc));
 

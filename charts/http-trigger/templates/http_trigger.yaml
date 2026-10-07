@@ -1,23 +1,58 @@
-apiVersion: control.cosmonic.io/v1alpha1
-kind: HTTPTrigger
+{{- $hasHTTP := false }}
+{{- range .Values.hostInterfaces }}
+{{- if and (eq .namespace "wasi") (eq .package "http") }}
+{{- $hasHTTP = true }}
+{{- end }}
+{{- end }}
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: WorkloadDeployment
 metadata:
   name: {{ .Release.Name }}
   namespace: {{ .Release.Namespace }}
   labels: {{- include "http-trigger.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
-  {{- with .Values.hostSelector }}
-  hostSelector: {{ . }}
-  {{- end }}
-  ingress:
-    host: {{ .Values.ingress.host }}
-    paths: {{ toYaml .Values.ingress.paths | nindent 6 }}
   template:
     spec:
-      components: {{ tpl (toYaml .Values.components) . | nindent 8 }}
-      {{- with .Values.hostInterfaces }}
-      hostInterfaces: {{ toYaml . | nindent 8 }}
+      {{- with .Values.hostSelector }}
+      hostSelector: {{- toYaml . | nindent 8 }}
       {{- end }}
+      components: {{ tpl (toYaml .Values.components) . | nindent 8 }}
+      hostInterfaces:
+        {{- if not $hasHTTP }}
+        - namespace: wasi
+          package: http
+          interfaces:
+            - incoming-handler
+          {{- with .Values.ingress.host }}
+          config:
+            host: {{ . | quote }}
+          {{- end }}
+        {{- end }}
+        {{- with .Values.hostInterfaces }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- with .Values.volumes }}
       volumes: {{ toYaml . | nindent 8 }}
       {{- end }}
+---
+apiVersion: control.cosmonic.io/v1alpha2
+kind: HTTPTrigger
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels: {{- include "http-trigger.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.ingress.host }}
+  hostnames:
+    - {{ . | quote }}
+  {{- end }}
+  rules:
+    - matches:
+        {{- range .Values.ingress.paths }}
+        - path:
+            type: {{ eq (.pathType | default "Prefix") "Exact" | ternary "Exact" "PathPrefix" }}
+            value: {{ .path | quote }}
+        {{- end }}
+      backendRefs:
+        - name: {{ .Release.Name }}

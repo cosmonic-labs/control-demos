@@ -1,6 +1,6 @@
 # HTTP Trigger Helm Chart
 
-This is a reusable Helm chart for deploying HTTP components with automatic ingress in Cosmonic Control. The chart deploys a component using Cosmonic Control's [HTTPTrigger CRD](https://cosmonic.com/docs/custom-resources#httptrigger).
+This is a reusable Helm chart for deploying HTTP components with automatic ingress in Cosmonic Control. The chart renders a `WorkloadDeployment` that runs the component and a `control.cosmonic.io/v1alpha2` [HTTPTrigger](https://cosmonic.com/docs/custom-resources#httptrigger) that routes the ingress host and paths to it. Chart `0.2.0` and later require Cosmonic Control v0.13.0 or later; use chart `0.1.x` with earlier Control releases.
 
 ## Usage
 

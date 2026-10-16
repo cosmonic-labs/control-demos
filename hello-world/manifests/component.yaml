@@ -1,17 +1,35 @@
-apiVersion: control.cosmonic.io/v1alpha1
-kind: HTTPTrigger
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: WorkloadDeployment
 metadata:
   name: hello-world
   namespace: default
 spec:
   replicas: 1
-  ingress:
-    host: "hello.localhost.cosmonic.sh"
-    paths:
-      - path: /
-        pathType: Prefix
   template:
     spec:
+      hostInterfaces:
+        - namespace: wasi
+          package: http
+          interfaces:
+            - incoming-handler
+          config:
+            host: hello.localhost.cosmonic.sh
       components:
         - name: http
           image: ghcr.io/cosmonic-labs/control-demos/hello-world:0.1.2
+---
+apiVersion: control.cosmonic.io/v1alpha2
+kind: HTTPTrigger
+metadata:
+  name: hello-world
+  namespace: default
+spec:
+  hostnames:
+    - hello.localhost.cosmonic.sh
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: hello-world

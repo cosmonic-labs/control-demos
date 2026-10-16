@@ -41,7 +41,7 @@ Cosmonic Control is free to get started. Deploy with Helm:
 
 ```shell
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
-  --version 0.4.3 \
+  --version 0.13.0 \
   --namespace cosmonic-system \
   --create-namespace
 ```
@@ -50,7 +50,7 @@ Deploy a HostGroup:
 
 ```shell
 helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
-  --version 0.4.3 \
+  --version 0.13.0 \
   --namespace cosmonic-system
 ```
 

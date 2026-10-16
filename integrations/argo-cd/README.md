@@ -104,29 +104,47 @@ Modify `hello-proj.yaml` to update the `repoURL` on Line 9 to target your new fo
 - repoURL: https://github.com/cosmonic-labs/control-demos.git
 ```
 
-The Argo Application is now targeting a manifest file in the `hello-world` directory of your control-demos fork. Let's take a quick look at the component's manifest, which uses the [HTTPTrigger custom resource](https://cosmonic.com/docs/custom-resources/#httptrigger) for simple deployments of HTTP components:
+The Argo Application is now targeting a manifest file in the `hello-world` directory of your control-demos fork. Let's take a quick look at the component's manifest. It pairs a `WorkloadDeployment`, which runs the component, with an [HTTPTrigger custom resource](https://cosmonic.com/docs/custom-resources/#httptrigger) that routes requests for `hello.localhost.cosmonic.sh` to it:
 
 ```yaml
-apiVersion: control.cosmonic.io/v1alpha1
-kind: HTTPTrigger
+apiVersion: runtime.wasmcloud.dev/v1alpha1
+kind: WorkloadDeployment
 metadata:
   name: hello-world
   namespace: default
 spec:
   replicas: 1
-  ingress:
-    host: "hello.localhost.cosmonic.sh"
-    paths:
-      - path: /
-        pathType: Prefix
   template:
     spec:
+      hostInterfaces:
+        - namespace: wasi
+          package: http
+          interfaces:
+            - incoming-handler
+          config:
+            host: hello.localhost.cosmonic.sh
       components:
         - name: http
           image: ghcr.io/cosmonic-labs/control-demos/hello-world:0.1.2
+---
+apiVersion: control.cosmonic.io/v1alpha2
+kind: HTTPTrigger
+metadata:
+  name: hello-world
+  namespace: default
+spec:
+  hostnames:
+    - hello.localhost.cosmonic.sh
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: hello-world
 ```
 
-Don't make any changes at this stage, but note the OCI artifact we're using on Line 17: it's in the `cosmonic-labs` namespace and tagged `0.1.2`.
+Don't make any changes at this stage, but note the OCI artifact we're using on Line 19: it's in the `cosmonic-labs` namespace and tagged `0.1.2`.
 
 Now apply the `hello-proj.yaml` Argo Application CRD manifest from `integrations/argo-cd/`:
 

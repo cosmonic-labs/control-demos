@@ -39,7 +39,7 @@ Cosmonic Control is free to get started. Deploy it to Kubernetes with Helm, pre-
 
 ```shell
 helm install cosmonic-control oci://ghcr.io/cosmonic/cosmonic-control \
-  --version 0.4.3 \
+  --version 0.13.0 \
   --namespace cosmonic-system \
   --create-namespace \
   --set 'ingress.hosts[0].host=petstore-mcp.localhost.cosmonic.sh'
@@ -49,7 +49,7 @@ Deploy a HostGroup:
 
 ```shell
 helm install hostgroup oci://ghcr.io/cosmonic/cosmonic-control-hostgroup \
-  --version 0.4.3 \
+  --version 0.13.0 \
   --namespace cosmonic-system
 ```
 
@@ -64,7 +64,7 @@ helm install petstore-mcp ../../charts/http-trigger -f values.http-trigger.yaml
 You can also deploy the chart as an OCI artifact with a remote values file:
 
 ```shell
-helm install petstore-mcp --version 0.1.2 oci://ghcr.io/cosmonic-labs/charts/http-trigger -f https://raw.githubusercontent.com/cosmonic-labs/control-demos/refs/heads/main/petstore-mcp/values.http-trigger.yaml
+helm install petstore-mcp --version 0.2.0 oci://ghcr.io/cosmonic-labs/charts/http-trigger -f https://raw.githubusercontent.com/cosmonic-labs/control-demos/refs/heads/main/petstore-mcp/values.http-trigger.yaml
 ```
 
 ## Running on Kubernetes
